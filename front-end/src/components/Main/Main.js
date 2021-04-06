@@ -17,9 +17,16 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
+import {
+    Switch,
+    Route,
+    Link
+} from "react-router-dom";
 import "./Main.css"
 import Home from '../home.js'
 import SearchIcon from '@material-ui/icons/Search';
+import Login from '../Login';
+import Signup from '../Signup';
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -50,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
         marginRight: 36,
         [theme.breakpoints.up("sm")]: { // change when required
             display: 'none',
-          },
+        },
     },
     hide: {
         display: 'none',
@@ -61,7 +68,7 @@ const useStyles = makeStyles((theme) => ({
         whiteSpace: 'nowrap',
         [theme.breakpoints.up("sm")]: { // change when required
             display: 'none',
-            marginRight:'0',
+            marginRight: '0',
         },
     },
     drawerOpen: {
@@ -93,11 +100,11 @@ const useStyles = makeStyles((theme) => ({
     content: {
         flexGrow: 1,
         // padding: theme.spacing(3),
-        height:'100vh',
+        height: '100vh',
         background: 'rgb(0,27,36)',
         background: "linear-gradient(104deg, rgba(0,27,36,1) 0%, rgba(10,62,66,0.6141807064622724) 45%)",
     },
-    
+
 }));
 
 export default function Main() {
@@ -117,14 +124,14 @@ export default function Main() {
         <>
             <div className={classes.root}>
                 <CssBaseline />
-                    <AppBar
-                        position="fixed"
-                        className={clsx(classes.appBar, {
-                            [classes.appBarShift]: open,
-                        })}
-                    >
+                <AppBar
+                    position="fixed"
+                    className={clsx(classes.appBar, {
+                        [classes.appBarShift]: open,
+                    })}
+                >
                     <Toolbar>
-                       
+
                         <IconButton
                             color="inherit"
                             aria-label="open drawer"
@@ -141,18 +148,25 @@ export default function Main() {
                             {/* <div className={classes.menuItems}> */}
                             <div className='searchBar'>
                                 <input placeholder='Search' />
-                                <SearchIcon className='searchicon'/>
+                                <SearchIcon className='searchicon' />
                             </div>
                             <div className='menuItems'>
                                 <ul>
-                                    <li><a href='#home'>Home</a></li>
-                                    <li><a href='#Login'>Login</a></li>
+                                    <li>
+                                        <Link to='/'>Home</Link>
+                                    </li>
+                                    <li>
+                                        <Link to='/Login'>Login</Link>
+                                    </li>
+                                    <li>
+                                        <Link to='/Signup'>Signup</Link>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
                     </Toolbar>
                 </AppBar>
-                <Drawer
+                {/* <Drawer
                     variant="permanent"
                     className={clsx(classes.drawer, {
                         [classes.drawerOpen]: open,
@@ -188,16 +202,21 @@ export default function Main() {
                             </ListItem>
                         ))}
                     </List>
-                </Drawer>
+                </Drawer> */}
                 <main className={classes.content}>
                     <div className={classes.toolbar} />
-                    <Home />
+                    {/* <Login pageClicked='login' /> */}
+                    <Switch>
+                        <Route exact path='/' component={Home}></Route>
+                        <Route exact path='/Login' component={Login}></Route>
+                        <Route exact path='/Signup' component={Signup}></Route>
+                    </Switch>
                 </main>
 
             </div>
-            <footer style={{position: "fixed",textAlign: 'center',width: '100%',bottom: '0',borderTop: '1px solid black'}}>
+            {/* <footer style={{position: "fixed",textAlign: 'center',width: '100%',bottom: '0',borderTop: '1px solid black'}}>
                 &copy;hytjusymiy
-            </footer>
+            </footer> */}
         </>
     );
 }
