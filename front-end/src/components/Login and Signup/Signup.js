@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import "./Login_and_signup.css";
-import {Link} from "react-router-dom"
+import { Link } from "react-router-dom"
+import Logo from '../Logo/Logo';
 class Signup extends Component {
     constructor(props) {
         super(props)
@@ -9,8 +10,8 @@ class Signup extends Component {
             email: '',
             password: '',
             regno: '',
-            uname:'',
-            conf_pwd : '',
+            uname: '',
+            conf_pwd: '',
         }
         // this.handleChange = this.handleChange.bind(this);
     }
@@ -29,13 +30,7 @@ class Signup extends Component {
         return (
             <div className='row login_signup'>
                 <div className='col-md-6 logo'>
-                    <div className='logo_content'>
-                        <h1>J</h1>
-                        <dl>
-                            <dt className='text-center'> <span>Jobify</span> </dt>
-                            <dd> Make Students Placement Ready </dd>
-                        </dl>
-                    </div>
+                    <Logo />
                 </div>
                 <div className='col-md-6'>
 

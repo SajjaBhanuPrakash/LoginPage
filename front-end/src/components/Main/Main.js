@@ -23,10 +23,12 @@ import {
     Link
 } from "react-router-dom";
 import "./Main.css"
-import Home from '../home.js'
+import Home from '../Home/home.js'
 import SearchIcon from '@material-ui/icons/Search';
-import Login from '../Login';
-import Signup from '../Signup';
+import Login from '../Login and Signup/Login';
+import Signup from '../Login and Signup/Signup';
+import InterviewInfo from '../InterviewInfo/InterviewInfo'
+import ForgotPassword from '../forgotPassword/forgotPassword';
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -100,7 +102,7 @@ const useStyles = makeStyles((theme) => ({
     content: {
         flexGrow: 1,
         // padding: theme.spacing(3),
-        height: '100vh',
+        minHeight: '100vh',
         background: 'rgb(0,27,36)',
         background: "linear-gradient(104deg, rgba(0,27,36,1) 0%, rgba(10,62,66,0.6141807064622724) 45%)",
     },
@@ -210,6 +212,8 @@ export default function Main() {
                         <Route exact path='/' component={Home}></Route>
                         <Route exact path='/Login' component={Login}></Route>
                         <Route exact path='/Signup' component={Signup}></Route>
+                        <Route exact path={'/InterviewInfo/:userId'} component={InterviewInfo}></Route>
+                        <Route exact path={'/FortgotPassword'} component={ForgotPassword}></Route>
                     </Switch>
                 </main>
 

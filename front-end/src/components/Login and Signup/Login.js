@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import "./Login_and_signup.css";
 import {Link} from "react-router-dom"
+import Logo from '../Logo/Logo';
 class Login extends Component {
     constructor(props) {
         super(props)
@@ -27,13 +28,7 @@ class Login extends Component {
             <div className='row login_signup'>
                 <div className='col-sm-4 col-md-6 logo'>
                     {/* <img src={logo} alt="interview pic" /> */}
-                    <div className='logo_content'>
-                        <h1>J</h1>
-                        <dl>
-                            <dt className='text-center'> <span>Jobify</span> </dt>
-                            <dd> Make Students Placement Ready </dd>
-                        </dl>
-                    </div>
+                    <Logo/>
                 </div>
                 <div className='col-sm-8 col-md-6'>
 
@@ -43,7 +38,7 @@ class Login extends Component {
                             <input type='email' name="email" placeholder="Email.." required onChange={this.handleChange} /><br />
                             <input type='password' name='password' placeholder='Password' required onChange={this.handleChange} /><br />
                             <div className="pwd_and_btn">
-                                <a href="#" >Forgot Password?</a>
+                                <Link to="/FortgotPassword" >Forgot Password?</Link>
                                 <button type="button" onClick={this.handleSubmit} className='btn'>
                                     Login
                                 </button>
