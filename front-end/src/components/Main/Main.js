@@ -28,7 +28,11 @@ import SearchIcon from '@material-ui/icons/Search';
 import Login from '../Login and Signup/Login';
 import Signup from '../Login and Signup/Signup';
 import InterviewInfo from '../InterviewInfo/InterviewInfo'
-import ForgotPassword from '../forgotPassword/forgotPassword';
+import ForgotPassword from '../Password/forgotPassword';
+import ResetPassword from '../Password/resetPassword';
+import ChangePassword from '../Password/changePassword';
+import CreatePost from '../createPost/createPost';
+
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -104,6 +108,7 @@ const useStyles = makeStyles((theme) => ({
         // padding: theme.spacing(3),
         minHeight: '100vh',
         background: 'rgb(0,27,36)',
+        // background:'linear-gradient(104deg, rgb(0 27 36 / 77%) 0%, rgb(10 62 66 / 16%) 45%);'
         background: "linear-gradient(104deg, rgba(0,27,36,1) 0%, rgba(10,62,66,0.6141807064622724) 45%)",
     },
 
@@ -213,7 +218,11 @@ export default function Main() {
                         <Route exact path='/Login' component={Login}></Route>
                         <Route exact path='/Signup' component={Signup}></Route>
                         <Route exact path={'/InterviewInfo/:userId'} component={InterviewInfo}></Route>
-                        <Route exact path={'/FortgotPassword'} component={ForgotPassword}></Route>
+                        <Route exact path={'/ForgotPassword'} component={ForgotPassword}></Route>
+                        <Route exact path={'/ResetPassword'} component={ResetPassword}></Route>
+                        <Route exact path={'/ChangePassword'} component={ChangePassword}></Route>
+                        <Route exact path={'/CreatePost'} component={CreatePost}></Route>
+
                     </Switch>
                 </main>
 

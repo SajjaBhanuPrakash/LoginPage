@@ -13,7 +13,7 @@ class Signup extends Component {
             uname: '',
             conf_pwd: '',
         }
-        // this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     handleChange = (event) => {
@@ -22,9 +22,28 @@ class Signup extends Component {
         })
     }
 
-    handleSubmit = (event) => {
-        event.preventDefault()
-        console.log(this.state)
+    async handleSubmit() {
+        try {
+            const result = await fetch('/signup', {
+                method: 'post',
+                mode: 'no-cors',
+                headers: {
+                    "Accept": 'application/json',
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: this.state.email,
+                    password: this.state.password,
+                    regno: this.state.regno,
+                    uname: this.state.uname,
+                    conf_pwd: this.state.conf_pwd
+                })
+            });
+        } catch (e) {
+            console.log(e)
+        }
+        // event.preventDefault()
+        // console.log(this.state)
     }
     render() {
         return (
@@ -36,12 +55,12 @@ class Signup extends Component {
 
                     <div className='container fillForm'>
                         <div className="card">
-                            <p>Sign up for ur career</p>
-                            <input type='email' name="email" placeholder="Email.." required onChange={this.handleChange} /><br />
+                            <p>Sign up for your career</p>
+                            <input type='email' name="email" placeholder="Email" required onChange={this.handleChange} /><br />
                             <input type='text' name='regno' placeholder='Reg.No' required onChange={this.handleChange} /><br />
                             <input type='name' name='uname' placeholder='Name' required onChange={this.handleChange} /><br />
                             <input type='password' name='password' placeholder='Password' required onChange={this.handleChange} /><br />
-                            <input type='password' name='conf_pwd' placeholder='Conform Password' required onChange={this.handleChange} /><br />
+                            <input type='password' name='conf_pwd' placeholder='Confirm Password' required onChange={this.handleChange} /><br />
                             <div className="pwd_and_btn">
                                 <button type="button" onClick={this.handleSubmit} className='btn'>
                                     Signup

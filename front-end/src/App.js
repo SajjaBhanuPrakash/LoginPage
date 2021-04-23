@@ -1,7 +1,7 @@
 // import logo from './logo.svg';
 import React, { Component } from 'react';
 import './App.css';
-import Home from './components/Home/home'
+// import Home from './components/Home/home'
 import Main from './components/Main/Main'
 import { BrowserRouter as Router } from "react-router-dom"
 import { createBrowserHistory } from 'history';
@@ -16,7 +16,6 @@ class App extends Component {
         <Router history={history}>
           <Main />
         </Router>
-
       </div>
     );
   }

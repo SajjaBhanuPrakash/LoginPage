@@ -26,17 +26,16 @@ class Home extends Component {
     }
     render() {
         return (
-            <div className='home'>
+            <div className='home p-5'>
                 <div className='row'>
-
                     {myData.map(item => {
                         return (
-                            <div className='col-lg-6'>
-                                <div onClick={() => this.onNavigateExperience(item.id)} className='button '>
+                            <div className='col-sm-12 col-md-12 col-lg-6'>
+                                <div onClick={() => this.onNavigateExperience(item.id)} className='button'>
                                     <div>
                                         <span>{item.company} | @{item.name}</span>
                                         <p>
-                                            {`${item.experience.substring(0,50)}...`}
+                                            {`${item.experience.substring(0,100)}...`}
                                         </p>
                                     </div>
                                 </div>

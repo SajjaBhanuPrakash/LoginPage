@@ -9,4 +9,4 @@ export default function Logo() {
             <hr style={{ color: 'rgb(245,248,4)' }} />
         </div>
     )
-}
+} 

@@ -10,18 +10,35 @@ class Login extends Component {
             email: '',
             password: ''
         }
-        // this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
+
 
     handleChange = (event) => {
         this.setState({
             [event.target.name]: event.target.value
         })
+        // console.log(this.state)
+
     }
 
-    handleSubmit = (event) => {
-        event.preventDefault()
-        console.log(this.state)
+    async handleSubmit(){
+        try {
+            const result = await fetch('/login', {
+                method: 'post',
+                mode: 'no-cors',
+                headers: {
+                    "Accept" : 'application/json',
+                    'Content-type' : 'application/json'
+                },
+                body: JSON.stringify({
+                    email: this.state.email,
+                    password: this.state.password
+                })
+            });
+        } catch(e) {
+            console.log(e)
+        }
     }
     render() {
         return (
@@ -36,9 +53,9 @@ class Login extends Component {
                         <div className="card">
                             <p>Login to your Account</p>
                             <input type='email' name="email" placeholder="Email.." required onChange={this.handleChange} /><br />
-                            <input type='password' name='password' placeholder='Password' required onChange={this.handleChange} /><br />
+                            <input type='password' name='password' placeholder='Password..' required onChange={this.handleChange} /><br />
                             <div className="pwd_and_btn">
-                                <Link to="/FortgotPassword" >Forgot Password?</Link>
+                                <Link to="/ForgotPassword" >Forgot Password?</Link>
                                 <button type="button" onClick={this.handleSubmit} className='btn'>
                                     Login
                                 </button>
