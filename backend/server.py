@@ -10,7 +10,7 @@ app = Flask(__name__)
 app.secret_key = b'\xcc^\x91\xea\x17-\xd0W\x03\xa7\xf8J0\xac8\xc5'
 
 
-@app.route("/")
+@app.route("/", methods=['GET'])
 def home():
     return "return recent posts", 200
 
@@ -98,5 +98,4 @@ def set_new_password():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5678)
-
+    app.run(port=5678)
