@@ -1,37 +1,28 @@
 import React, { Component } from 'react'
 import './InterviewInfo.css'
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
-import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
+// import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
 import ChatBubbleOutlineRoundedIcon from '@material-ui/icons/ChatBubbleOutlineRounded';
 import CloseIcon from '@material-ui/icons/Close';
 
 // import {
 //     useParams
 // } from "react-router-dom";
-const comments = [{ userName: 'vinitha', message: 'comment comment comment comment comment comment comment comment' },
-{ userName: 'vinitha', message: 'comment comment comment comment comment comment comment comment' },
-{ userName: 'vinitha', message: 'comment comment comment comment comment comment comment comment' },
-{ userName: 'vinitha', message: 'comment comment comment comment comment comment comment comment' },
-{ userName: 'vinitha', message: 'comment comment comment comment comment comment comment comment' },
-{ userName: 'vinitha', message: 'comment comment comment comment comment comment comment comment' },
-{ userName: 'vinitha', message: 'comment comment comment comment comment comment comment comment' },
-]
-
-let likes = 0
-let dislikes = 0
-let commentCount = 0 
+let item;
+// const post={companyName:"Infosys", userName: "Bhavya",likes: 3, experience:"nsdbg agsj ngsjabs gdsahgj hgdshag gdsyg hgsdyg hgsdyg gsyg hgsy hgxyudegw hgdhsg hdgshfuytf esfdh dewfydw gefhddbsgd sdhgew dewhgew ehgrh wehgr hgew uw hgrh wgrn ygejrh hgfej ",commentCount: 0 }
 class InterviewInfo extends Component {
 
     constructor(props) {
         super(props)
-        {
-            this.state = {
-                displayComments: false,
-                comment_msg: '',
-                isLiked: false,
-                isDisliked: false,
-            }
+
+        this.state = {
+            displayComments: false,
+            comment_msg: '',
+            isLiked: false,
         }
+        this.handleAddComment = this.handleAddComment.bind(this);
+        this.handleLikes = this.handleLikes.bind(this);
+        // console.log(this.props)      
     }
     handleCommentsOpen = () => {
         this.setState(
@@ -47,100 +38,100 @@ class InterviewInfo extends Component {
             }
         )
     }
-    handleAddComment = (event) => {
+    async handleAddComment(event) {
         // console.log("hello")
-        commentCount += 1;
         this.setState(
             {
                 comment_msg: event.target.value
             }
         )
+
+        try {
+            const result = await fetch('/add_comment', {
+                method: 'post',
+                mode: 'no-cors',
+                headers: {
+                    "Accept": 'application/json',
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    comment_msg: this.state.comment_msg
+                })
+            });
+
+        } catch (e) {
+            console.log(e)
+        }
     }
 
-    handleLikes = (prevState) => {
-        if(!this.state.isDisliked && !this.state.isLiked){
-            likes += 1;
+    async handleLikes(prevState) {
+        if (!this.state.isLiked) {
             this.setState({
                 isLiked: !prevState.isLiked,
             })
-
         }
+
+        try {
+            const result = await fetch('/add_comment', {
+                method: 'post',
+                mode: 'no-cors',
+                headers: {
+                    "Accept": 'application/json',
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    likes: item.likes + 1
+                })
+            });
+
+        } catch (e) {
+            console.log(e)
+        }
+
     }
 
-    handleDisLikes = (prevState) => {
-        if(!this.state.isDisliked && !this.state.isLiked){
-            dislikes += 1;
-            this.setState({
-                isDisliked: !prevState.isDisliked,
-            })
-        }
-    }
+    // componentDidMount() {
+    //     console.log(item)
+    // }
     render() {
-        const userId = this.props.match.params.userId
-        return (
-            <div className="post-holder">
-                <div className='post'>
-                    <div className='post-header'>
-                        <div className='post-company'>
-                            <span>INFOSYS</span>
-                        </div>
-                        <div className="post-owner">
-                            <span>-@Bhavya</span>
-                        </div>
-                    </div>
-                    <div className='post-content hideScroll'>
-                        <p>
-                            hdgtfdfgjhdsbchgfekszjgfyxjhvbsdhiwauytefghadvsjzhclyucsge
-                            jsghbndahakduzygxvsdbnajhyuzcfxghvdam,bhdliagSCYukhvjbd,jakwhhudli
-                            bsnjdxhskgvbsjzckhiugydkahwvbjkdsiljzcyugdshvbkqljsadliczuyghdzsavbjHSK
-                            AHJSDKZLUCIXGYSHDVBDYISTGUSJEWIUYFDGSH
-                            khsdbjfskwaityefgvbjdkhlzfysufzhoiazhuidshdbvxhyksgseygduzvhyxgdufkj
-                            sbxnzchvhdsj,cgSJZGcuyfafwryhjhdsuydvbchblxvkidjegufsydgsxjvhlifdhsgyuefdjgvbj,udh
-                            ckjxbjhxgdshvkhbhjvdj,xj cbnjhb
-                            hdgtfdfgjhdsbchgfekszjgfyxjhvbsdhiwauytefghadvsjzhclyucsge
-                            jsghbndahakduzygxvsdbnajhyuzcfxghvdam,bhdliagSCYukhvjbd,jakwhhudli
-                            bsnjdxhskgvbsjzckhiugydkahwvbjkdsiljzcyugdshvbkqljsadliczuyghdzsavbjHSK
-                            AHJSDKZLUCIXGYSHDVBDYISTGUSJEWIUYFDGSH
-                            khsdbjfskwaityefgvbjdkhlzfysufzhoiazhuidshdbvxhyksgseygduzvhyxgdufkj
-                            sbxnzchvhdsj,cgSJZGcuyfafwryhjhdsuydvbchblxvkidjegufsydgsxjvhlifdhsgyuefdjgvbj,udh
-                            ckjxbjhxgdshvkhbhjvdj,xj cbnjhb
-                            hdgtfdfgjhdsbchgfekszjgfyxjhvbsdhiwauytefghadvsjzhclyucsge
-                            jsghbndahakduzygxvsdbnajhyuzcfxghvdam,bhdliagSCYukhvjbd,jakwhhudli
-                            bsnjdxhskgvbsjzckhiugydkahwvbjkdsiljzcyugdshvbkqljsadliczuyghdzsavbjHSK
-                            AHJSDKZLUCIXGYSHDVBDYISTGUSJEWIUYFDGSH
-                            khsdbjfskwaityefgvbjdkhlzfysufzhoiazhuidshdbvxhyksgseygduzvhyxgdufkj
-                            sbxnzchvhdsj,cgSJZGcuyfafwryhjhdsuydvbchblxvkidjegufsydgsxjvhlifdhsgyuefdjgvbj,udh
-                            ckjxbjhxgdshvkhbhjvdj,xj cbnjhb
-                            hdgtfdfgjhdsbchgfekszjgfyxjhvbsdhiwauytefghadvsjzhclyucsge
-                            jsghbndahakduzygxvsdbnajhyuzcfxghvdam,bhdliagSCYukhvjbd,jakwhhudli
-                            bsnjdxhskgvbsjzckhiugydkahwvbjkdsiljzcyugdshvbkqljsadliczuyghdzsavbjHSK
-                            AHJSDKZLUCIXGYSHDVBDYISTGUSJEWIUYFDGSH
-                            khsdbjfskwaityefgvbjdkhlzfysufzhoiazhuidshdbvxhyksgseygduzvhyxgdufkj
-                            sbxnzchvhdsj,cgSJZGcuyfafwryhjhdsuydvbchblxvkidjegufsydgsxjvhlifdhsgyuefdjgvbj,udh
-                            ckjxbjhxgdshvkhbhjvdj,xj cbnjhb
-                        </p>
-                    </div>
-                    {/* <hr className='mt-0 text-dark'/> */}
-                    <div className='post-footer'>
-                        <div className='icons'>
-                            <div>
-                                <span className='m-3'><ThumbUpIcon className='thumbUp' onClick={this.handleLikes}/>{likes}</span>
-                                <span><ThumbDownAltIcon className='thumbDown' onClick={this.handleDisLikes}/>{dislikes}</span>
+        // const userId = this.props.match.params.userId
+        item = this.props.location.state;
+        console.log(item)
+        if (item) {
+            return (
+                <div className="post-holder">
+                    <div className='post'>
+                        <div className='post-header'>
+                            <div className='post-company'>
+                                <span>{item.company}</span>
                             </div>
-                            <span><ChatBubbleOutlineRoundedIcon className='commentButton' onClick={this.handleCommentsOpen} />{commentCount}</span>
+                            <div className="post-owner">
+                                <span>-@{item.name}</span>
+                            </div>
+                        </div>
+                        <div className='post-content hideScroll'>
+                            <p>
+                                {item.experience}
+                            </p>
+                        </div>
+                        <div className='post-footer'>
+                            <div className='icons'>
+                                <span><ThumbUpIcon className='thumbUp' onClick={this.handleLikes} /> {item.likes}</span>
+                                <span><ChatBubbleOutlineRoundedIcon className='commentButton' onClick={this.handleCommentsOpen} /> {item.comments && item.comments.length}</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                {
-                    this.state.displayComments
-                    &&
-                    <div className='comment-holder'>
-                        <div className='closeIcon'>
-                            <CloseIcon onClick={this.handleCommentsClose} />
-                        </div>
-                        <div className='allComments hideScroll'>
+                    {
+                        this.state.displayComments
+                        &&
+                        <div className='comment-holder'>
+                            <div className='closeIcon'>
+                                <CloseIcon onClick={this.handleCommentsClose} />
+                            </div>
+                            <div className='allComments hideScroll'>
                                 {
-                                    comments.map(comment => {
+                                    item.comments &&
+                                    item.comments.map(comment => {
                                         return (
                                             <div className='comment'>
                                                 <span className='comment-owner'>{comment.userName}:</span>
@@ -150,15 +141,19 @@ class InterviewInfo extends Component {
                                     }
                                     )
                                 }
+                            </div>
+                            <div className='comment-footer'>
+                                <textarea rows='1' cols='20' name='comment_msg' placeholder='Add your comment..' className='addComment hideScroll' />
+                                <button type='button' onClick={this.handleAddComment} className='postComment'>Post</button>
+                            </div>
                         </div>
-                        <div className='comment-footer'>
-                            <textarea rows='1' cols='20' name='comment_msg' placeholder='Add your comment..' className='addComment hideScroll' />
-                            <button type='button' onClick={this.handleAddComment} className='postComment'>Post</button>
-                        </div>
-                    </div>
-                }
-            </div>
-        )
+                    }
+                </div>
+            )
+        }
+        else {
+            return null;
+        }
     }
 }
 

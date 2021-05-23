@@ -11,6 +11,7 @@ class Signup extends Component {
             password: '',
             regno: '',
             uname: '',
+            branch: '',
             conf_pwd: '',
         }
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -36,12 +37,17 @@ class Signup extends Component {
                     password: this.state.password,
                     regno: this.state.regno,
                     uname: this.state.uname,
+                    branch: this.state.branch,
                     conf_pwd: this.state.conf_pwd
-                })
+                })    
             });
+
+            this.props.history.push('/CreatePost')
         } catch (e) {
             console.log(e)
         }
+
+        
         // event.preventDefault()
         // console.log(this.state)
     }
@@ -58,7 +64,8 @@ class Signup extends Component {
                             <p>Sign up for your career</p>
                             <input type='email' name="email" placeholder="Email" required onChange={this.handleChange} /><br />
                             <input type='text' name='regno' placeholder='Reg.No' required onChange={this.handleChange} /><br />
-                            <input type='name' name='uname' placeholder='Name' required onChange={this.handleChange} /><br />
+                            <input type='text' name='uname' placeholder='Name' required onChange={this.handleChange} /><br />
+                            <input type='text' name='branch' placeholder='Branch' required onChange={this.handleChange} /><br />
                             <input type='password' name='password' placeholder='Password' required onChange={this.handleChange} /><br />
                             <input type='password' name='conf_pwd' placeholder='Confirm Password' required onChange={this.handleChange} /><br />
                             <div className="pwd_and_btn">

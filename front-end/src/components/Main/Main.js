@@ -32,6 +32,8 @@ import ForgotPassword from '../Password/forgotPassword';
 import ResetPassword from '../Password/resetPassword';
 import ChangePassword from '../Password/changePassword';
 import CreatePost from '../createPost/createPost';
+import ShowPosts from '../profile/showPosts';
+import Profile from '../profile/profile';
 
 const drawerWidth = 240;
 
@@ -127,6 +129,7 @@ export default function Main() {
         setOpen(false);
     };
 
+
     return (
         <>
             <div className={classes.root}>
@@ -167,6 +170,9 @@ export default function Main() {
                                     </li>
                                     <li>
                                         <Link to='/Signup'>Signup</Link>
+                                    </li>
+                                    <li>
+                                        <Link to='/Profile'>Profile</Link>
                                     </li>
                                 </ul>
                             </div>
@@ -217,12 +223,13 @@ export default function Main() {
                         <Route exact path='/' component={Home}></Route>
                         <Route exact path='/Login' component={Login}></Route>
                         <Route exact path='/Signup' component={Signup}></Route>
-                        <Route exact path={'/InterviewInfo/:userId'} component={InterviewInfo}></Route>
+                        <Route exact path={'/InterviewInfo'}  component={InterviewInfo}></Route>
                         <Route exact path={'/ForgotPassword'} component={ForgotPassword}></Route>
                         <Route exact path={'/ResetPassword'} component={ResetPassword}></Route>
                         <Route exact path={'/ChangePassword'} component={ChangePassword}></Route>
                         <Route exact path={'/CreatePost'} component={CreatePost}></Route>
-
+                        <Route exact path={'/ShowPosts'} component={ShowPosts}></Route>
+                        <Route exact path={'/Profile'} component={Profile}></Route>
                     </Switch>
                 </main>
 

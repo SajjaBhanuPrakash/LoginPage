@@ -83,7 +83,7 @@ h1:after {
 }
 
 .btn:hover {
-    background-color:white;
+    background-color:rgb(255, 255, 255);
     color:rgb(0,27,36);
 }
 

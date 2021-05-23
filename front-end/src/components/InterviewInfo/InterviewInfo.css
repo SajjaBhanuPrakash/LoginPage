@@ -37,7 +37,7 @@
 .post-content{
     padding: 20px;
     font-size: 17px;
-    background-color: #c4cdcd;
+    background-color:white;
     color: black;
     word-wrap: break-word;
     align-content: justify;
@@ -56,10 +56,6 @@
 
 .thumbUp:active {
     color:blue;
-}
-
-.thumbDown:active {
-     color:red;
 }
 
 .commentButton:active {
@@ -123,4 +119,4 @@
 }
 .hideScroll::-webkit-scrollbar {
     display: none;
-  }
+}
