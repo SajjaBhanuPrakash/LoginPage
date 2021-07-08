@@ -41,7 +41,7 @@ li a:focus{
 .searchBar input {
     padding: 7px;
     width: 400px;
-    border-radius: 50px;
+    border-radius: 5px;
     border-color: white;
     height: 36px;
     margin: auto;

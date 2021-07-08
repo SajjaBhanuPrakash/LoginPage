@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -17,6 +17,8 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
+import { api_url } from '../config';
+import NavBar from './NavBar';
 import {
     Switch,
     Route,
@@ -31,8 +33,7 @@ import InterviewInfo from '../InterviewInfo/InterviewInfo'
 import ForgotPassword from '../Password/forgotPassword';
 import ResetPassword from '../Password/resetPassword';
 import ChangePassword from '../Password/changePassword';
-import CreatePost from '../createPost/createPost';
-import ShowPosts from '../profile/showPosts';
+import CreatePost from '../Post/createPost';
 import Profile from '../profile/profile';
 
 const drawerWidth = 240;
@@ -116,11 +117,13 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-export default function Main() {
+
+export default function Main(props) {
     const classes = useStyles();
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
-
+    const [input, setInput] = React.useState('')
+    const [companyNames, setCompanyNames] = React.useState([])
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -128,8 +131,48 @@ export default function Main() {
     const handleDrawerClose = () => {
         setOpen(false);
     };
+   
+    const handleChange = (event) => {
+        setInput(event.target.value)
+    }
 
+    const handleSearch = async () => {
+        try {
+            const result = await fetch(`${api_url}/posts/get_posts_by_company_name?company_name=${input}`, {
+                method: 'get',
+                mode: 'no-cors',
+                headers: {
+                    "Accept": 'application/json',
+                    'Content-type': 'application/json'
+                },
+            });
+            props.history.push('/');
+        } catch (e) {
+            console.log(e)
+        }
+    }
 
+    useEffect(() => {
+        sessionStorage.setItem('username', '')
+        sessionStorage.setItem('loggedin', false)
+        console.log('useeffect called')
+        // loggedin = JSON.parse(sessionStorage.getItem('loggedin'));
+        // const fetchData = async () => {
+        //     try {
+        //         await fetch(`${api_url}/posts/get_all_company_names`, {
+        //             method: 'get',
+        //             mode: 'no-cors',
+        //             headers: {
+        //                 "Accept": 'application/json',
+        //                 'Content-type': 'application/json'
+        //             },
+        //         }).then(data => setCompanyNames(JSON.parse(data)))
+        //     } catch (e) {
+        //         console.log(e)
+        //     }
+        //     console.log(companyNames)
+        // }
+    }, [])
     return (
         <>
             <div className={classes.root}>
@@ -157,25 +200,10 @@ export default function Main() {
                             <h4>Jobify</h4>
                             {/* <div className={classes.menuItems}> */}
                             <div className='searchBar'>
-                                <input placeholder='Search' />
-                                <SearchIcon className='searchicon' />
+                                <input onChange={handleChange} placeholder='Search by Company Name' />
+                                <SearchIcon onClick={handleSearch} className='searchicon' />
                             </div>
-                            <div className='menuItems'>
-                                <ul>
-                                    <li>
-                                        <Link to='/'>Home</Link>
-                                    </li>
-                                    <li>
-                                        <Link to='/Login'>Login</Link>
-                                    </li>
-                                    <li>
-                                        <Link to='/Signup'>Signup</Link>
-                                    </li>
-                                    <li>
-                                        <Link to='/Profile'>Profile</Link>
-                                    </li>
-                                </ul>
-                            </div>
+                            <NavBar />
                         </div>
                     </Toolbar>
                 </AppBar>
@@ -223,12 +251,12 @@ export default function Main() {
                         <Route exact path='/' component={Home}></Route>
                         <Route exact path='/Login' component={Login}></Route>
                         <Route exact path='/Signup' component={Signup}></Route>
-                        <Route exact path={'/InterviewInfo'}  component={InterviewInfo}></Route>
+                        <Route exact path={'/InterviewInfo/:post_id'} component={InterviewInfo}></Route>
                         <Route exact path={'/ForgotPassword'} component={ForgotPassword}></Route>
                         <Route exact path={'/ResetPassword'} component={ResetPassword}></Route>
                         <Route exact path={'/ChangePassword'} component={ChangePassword}></Route>
                         <Route exact path={'/CreatePost'} component={CreatePost}></Route>
-                        <Route exact path={'/ShowPosts'} component={ShowPosts}></Route>
+                        {/* <Route exact path={'/ShowPosts'} component={ShowPosts}></Route> */}
                         <Route exact path={'/Profile'} component={Profile}></Route>
                     </Switch>
                 </main>

@@ -49,3 +49,10 @@
 .hideScroll::-webkit-scrollbar {
     display: none;
 }
+
+.whenNoData {
+    color: white;
+    text-align: center;
+    font-size: 35px;
+    padding-top: 70px;
+}

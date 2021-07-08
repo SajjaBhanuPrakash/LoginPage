@@ -4,12 +4,8 @@ import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 // import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
 import ChatBubbleOutlineRoundedIcon from '@material-ui/icons/ChatBubbleOutlineRounded';
 import CloseIcon from '@material-ui/icons/Close';
+import { api_url } from "../config";
 
-// import {
-//     useParams
-// } from "react-router-dom";
-let item;
-// const post={companyName:"Infosys", userName: "Bhavya",likes: 3, experience:"nsdbg agsj ngsjabs gdsahgj hgdshag gdsyg hgsdyg hgsdyg gsyg hgsy hgxyudegw hgdhsg hdgshfuytf esfdh dewfydw gefhddbsgd sdhgew dewhgew ehgrh wehgr hgew uw hgrh wgrn ygejrh hgfej ",commentCount: 0 }
 class InterviewInfo extends Component {
 
     constructor(props) {
@@ -19,12 +15,14 @@ class InterviewInfo extends Component {
             displayComments: false,
             comment_msg: '',
             isLiked: false,
+            postData: null,
+            comments: []
         }
-        this.handleAddComment = this.handleAddComment.bind(this);
-        this.handleLikes = this.handleLikes.bind(this);
+        // this.handleAddComment = this.handleAddComment.bind(this);
+        // this.handleLikes = this.handleLikes.bind(this);
         // console.log(this.props)      
     }
-    handleCommentsOpen = () => {
+    handleCommentsOpen = async (post_id) => {
         this.setState(
             {
                 displayComments: true
@@ -38,41 +36,51 @@ class InterviewInfo extends Component {
             }
         )
     }
-    async handleAddComment(event) {
-        // console.log("hello")
-        this.setState(
-            {
-                comment_msg: event.target.value
-            }
-        )
 
+    async componentDidMount() {
+        const post_id = this.props.match?.params?.post_id
+        // console.log(post_id)
         try {
-            const result = await fetch('/add_comment', {
-                method: 'post',
+            const post_result = await fetch(`${api_url}/posts/get_single_post?post_id=${post_id}`, {
+                method: 'get',
                 mode: 'no-cors',
                 headers: {
                     "Accept": 'application/json',
                     'Content-type': 'application/json'
                 },
-                body: JSON.stringify({
-                    comment_msg: this.state.comment_msg
-                })
             });
-
-        } catch (e) {
-            console.log(e)
-        }
-    }
-
-    async handleLikes(prevState) {
-        if (!this.state.isLiked) {
+            const comments_result = await fetch(`${api_url}/posts/get_comments_for_post?post_id=${post_id}`, {
+                method: 'get',
+                mode: 'no-cors',
+                headers: {
+                    "Accept": 'application/json',
+                    'Content-type': 'application/json'
+                },
+            });
             this.setState({
-                isLiked: !prevState.isLiked,
+                // postData : JSON.parse(post_result)
+                // comments: JSON.parse(comments_result),
+                postData: {
+                    post_id: 1, company: 'Amazon', name: 'Samson', experience: "I recently got a chance to interview with Amazon. I had three rounds. \nRound 1: It started with my introduction and then the interviewer quickly jumped to the coding part. I was asked two questions. \nThe first question was finding sliding window maximum. https://www.geeksforgeeks.org/sliding-window-maximum-maximum-of-all-subarrays-of-size-k/\nThe second one was to find the distance between two nodes of the Binary tree. https://www.geeksforgeeks.org/find-distance-between-two-nodes-of-a-binary-tree/\nThen the interviewer slightly modified the question – what if the node structure of that binary tree defines – value, parent. Given the two nodes. Find the distance between them.\nRound 2: This round was also a technical round wherein I was asked two coding problems.\nhttps://www.geeksforgeeks.org/k-largestor-smallest-elements-in-an-array/\nhttps://www.geeksforgeeks.org/find-excel-column-name-given-number/\nRound 3: This was the last round. We had a discussion related to my internships and projects. Then he asked me a couple of behavioral questions.\nThen he asked me DP problem. https://www.geeksforgeeks.org/longest-increasing-subsequence-dp-3/\nThe interviewers were very friendly. Overall the level was medium. One needs to be very calm during solving the problems. Be very clear about the time and space complexities and always speak while you are thinking. Discuss your solution with the interviewer and then only move onto writing the code. Always ask your interviewer if you are stuck or if you have any doubts. \nVerdict: Selected\nGeeksforGeeks is a great place to learn Data structures and Algorithms, which is the most important part of the interviews.\nAll the best!", likes: 3, id: 4,
+                },
+                comments : [{ userName: 'Abcd', message: 'comment comment comment comment comment comment comment comment' },
+                    { userName: 'efgh', message: 'comment comment comment comment comment comment comment comment' },
+                    { userName: 'ijkl', message: 'comment comment comment comment comment comment comment comment' },
+                    { userName: 'mnop', message: 'comment comment comment comment comment comment comment comment' },
+                    { userName: 'qrst', message: 'comment comment comment comment comment comment comment comment' },
+                    { userName: 'uvwx', message: 'comment comment comment comment comment comment comment comment' },
+                    { userName: 'yzab', message: 'comment comment comment comment comment comment comment comment' },
+                    { userName: 'yzab', message: 'comment comment comment comment comment comment comment comment' },
+                    ],
             })
+        } catch (e) {
+            console.log(e)
         }
+    }
 
+    handleAddComment = async (event,post_id) => {
         try {
-            const result = await fetch('/add_comment', {
+            const result = await fetch(`${api_url}/posts/add_comment_to_post`, {
                 method: 'post',
                 mode: 'no-cors',
                 headers: {
@@ -80,44 +88,79 @@ class InterviewInfo extends Component {
                     'Content-type': 'application/json'
                 },
                 body: JSON.stringify({
-                    likes: item.likes + 1
+                    post_id: post_id,
+                    comment: event.target.value,
+                    author : JSON.parse(sessionStorage.getItem('username'))
                 })
             });
 
+            const comments_result = await fetch(`${api_url}/posts/get_comments_for_post?post_id=${post_id}`, {
+                method: 'get',
+                mode: 'no-cors',
+                headers: {
+                    "Accept": 'application/json',
+                    'Content-type': 'application/json'
+                },
+            });
+
+            this.setState ({
+                // comments: JSON.parse(comments_result)
+                comments : [{ userName: 'Abcd', message: 'comment comment comment comment comment comment comment comment' },
+                    { userName: 'efgh', message: 'comment comment comment comment comment comment comment comment' },
+                    { userName: 'ijkl', message: 'comment comment comment comment comment comment comment comment' },
+                    { userName: 'mnop', message: 'comment comment comment comment comment comment comment comment' },
+                    { userName: 'qrst', message: 'comment comment comment comment comment comment comment comment' },
+                    { userName: 'uvwx', message: 'comment comment comment comment comment comment comment comment' },
+                    { userName: 'yzab', message: 'comment comment comment comment comment comment comment comment' },
+                    { userName: 'yzab', message: 'comment comment comment comment comment comment comment comment' },
+                    { userName: 'efgh', message: 'comment comment comment comment comment comment comment comment' },
+                    ], 
+            })
+
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    handleLikes = async (post_id) => {
+        try {
+            // &user_name=${}
+            const result = await fetch(`${api_url}/posts/like_post?post_id=${post_id}`, {
+                method: 'post',
+                mode: 'no-cors',
+                headers: {
+                    "Accept": 'application/json',
+                    'Content-type': 'application/json'
+                }
+            })
         } catch (e) {
             console.log(e)
         }
 
     }
-
-    // componentDidMount() {
-    //     console.log(item)
-    // }
     render() {
-        // const userId = this.props.match.params.userId
-        item = this.props.location.state;
-        console.log(item)
-        if (item) {
+        const postData = this.state.postData;
+        if (postData) {
             return (
                 <div className="post-holder">
                     <div className='post'>
                         <div className='post-header'>
                             <div className='post-company'>
-                                <span>{item.company}</span>
+                                <span>{postData.company}</span>
                             </div>
                             <div className="post-owner">
-                                <span>-@{item.name}</span>
+                                <span>-@{postData.name}</span>
                             </div>
                         </div>
                         <div className='post-content hideScroll'>
                             <p>
-                                {item.experience}
+                                {postData.experience}
                             </p>
                         </div>
                         <div className='post-footer'>
                             <div className='icons'>
-                                <span><ThumbUpIcon className='thumbUp' onClick={this.handleLikes} /> {item.likes}</span>
-                                <span><ChatBubbleOutlineRoundedIcon className='commentButton' onClick={this.handleCommentsOpen} /> {item.comments && item.comments.length}</span>
+                                <span><ThumbUpIcon className='thumbUp' onClick={()=> this.handleLikes(postData.post_id)} /> {postData.likes}</span>
+                                <span><ChatBubbleOutlineRoundedIcon className='commentButton' onClick={() => this.handleCommentsOpen(postData.post_id)} /> {this.state.comments && this.state.comments.length}</span>
                             </div>
                         </div>
                     </div>
@@ -130,8 +173,8 @@ class InterviewInfo extends Component {
                             </div>
                             <div className='allComments hideScroll'>
                                 {
-                                    item.comments &&
-                                    item.comments.map(comment => {
+                                    this.state.comments?.length>0 &&
+                                    this.state.comments.map(comment => {
                                         return (
                                             <div className='comment'>
                                                 <span className='comment-owner'>{comment.userName}:</span>
@@ -144,7 +187,7 @@ class InterviewInfo extends Component {
                             </div>
                             <div className='comment-footer'>
                                 <textarea rows='1' cols='20' name='comment_msg' placeholder='Add your comment..' className='addComment hideScroll' />
-                                <button type='button' onClick={this.handleAddComment} className='postComment'>Post</button>
+                                <button type='button' onClick={(event) => this.handleAddComment(event,postData.post_id)} className='postComment'>Post</button>
                             </div>
                         </div>
                     }
@@ -158,36 +201,6 @@ class InterviewInfo extends Component {
 }
 
 export default InterviewInfo;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//  function InterviewInfo() {
-//     // We can use the `useParams` hook here to access
-//     // the dynamic pieces of the URL.
-//     let { userId } = useParams();
-
-//     return (
-//       <div>
-//         <h3>ID: {userId}</h3>
-//       </div>
-//     );
-//   }
-
 
 
 
