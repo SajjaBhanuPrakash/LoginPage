@@ -2,9 +2,9 @@
 
 ### API DEFINITIONS
 
-API = https://yizdp1uz3b.execute-api.us-east-1.amazonaws.com/
+API = https://kxk775by94.execute-api.us-west-2.amazonaws.com
 
-STAGE = dev
+STAGE = testing
 
 ## Resources
 
