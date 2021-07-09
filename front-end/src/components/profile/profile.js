@@ -36,10 +36,6 @@ class Profile extends Component {
         }
     }
 
-    handleUpdatePost = () => {
-
-    }
-
     handleMoreOptionsIcon = () => {
         console.log("hii");
         if (!this.state.displayMoreOptions) {

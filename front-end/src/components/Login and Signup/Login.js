@@ -3,6 +3,8 @@ import "./Login_and_signup.css";
 import { Link } from "react-router-dom"
 import Logo from '../Logo/Logo';
 import { api_url } from '../config';
+import * as Actions from '../../ActionCreator';
+import { connect } from "react-redux";
 
 
 
@@ -71,22 +73,23 @@ class Login extends Component {
 
     async handleSubmit() {
         if (this.validateForm(this.state.errors)) {
-            try {
-                const result = await fetch(`${api_url}/login?user_name = ${this.state.email} & password=${this.state.password}`, {
-                    method: 'get',
-                    mode: 'no-cors',
-                    headers: {
-                        "Accept": 'application/json',
-                        'Content-type': 'application/json'
-                    }
-                });
-                sessionStorage.setItem('username',this.state.email);
-                sessionStorage.setItem('loggedin',true);
-                this.props.history.push('/')
-
-            } catch (e) {
-                console.log(e)
-            }
+            const data = { user_name: this.state.email, password: this.state.password }
+            this.props.loginAPI(data);
+            // try {
+            //     const result = await fetch(`${api_url}/login?user_name = ${this.state.email} & password=${this.state.password}`, {
+            //         method: 'get',
+            //         mode: 'no-cors',
+            //         headers: {
+            //             "Accept": 'application/json',
+            //             'Content-type': 'application/json'
+            //         }
+            //     });
+            //     sessionStorage.setItem('username',this.state.email);
+            //     sessionStorage.setItem('loggedin',true);
+            //     this.props.history.push('/');
+            // } catch (e) {
+            //     console.log(e)
+            // }
         }
     }
     render() {
@@ -105,7 +108,7 @@ class Login extends Component {
                             <input type='email' name="email" placeholder="Email.." required onChange={this.handleChange} />
                             <span className="error">{errors.email.message}</span>
                             <br />
-                    
+
                             <input type='password' name='password' placeholder='Password..' required onChange={this.handleChange} />
                             <span className="error">{errors.password.message}</span>
                             <br />
@@ -127,4 +130,10 @@ class Login extends Component {
     }
 }
 
-export default Login;
+export const mapDispatchToProps = (dispatch, ownProps) => ({
+    loginAPI: (msg) => {
+        dispatch(Actions.loginAPI(msg, ownProps));
+    },
+})
+
+export default connect(null, mapDispatchToProps)(Login);

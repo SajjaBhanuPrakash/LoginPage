@@ -94,6 +94,33 @@ class CreatePost extends Component {
         return valid;
     };
 
+    async handleUpdate() {
+        try {
+            if (this.validateForm(this.state.errors)) {
+                const result = await fetch(`${api_url}/posts/update_post`, {
+                    method: 'post',
+                    mode: 'no-cors',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        author: JSON.parse(sessionStorage.getItem('username')),
+                        role: this.state.role,
+                        company_name: this.state.companyName,
+                        post_description: this.state.experience,
+                        package: this.state.package,
+                    })
+                });
+
+                this.props.history.push('/Profile')
+            }
+
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
     async handleSubmit() {
         try {
             if (this.validateForm(this.state.errors)) {
@@ -105,7 +132,7 @@ class CreatePost extends Component {
                         'Content-type': 'application/json'
                     },
                     body: JSON.stringify({
-                        // author: 'bhavya',
+                        author: JSON.parse(sessionStorage.getItem('username')),
                         role: this.state.role,
                         company_name: this.state.companyName,
                         post_description: this.state.experience,
@@ -121,26 +148,33 @@ class CreatePost extends Component {
         }
     }
 
-    // async componentDidMount() {
-    //     try {
-    //         const result = await fetch(`${api_url}/posts/get_single_post?post_id=${post_id}`, {
-    //             method: 'get',
-    //             mode: 'no-cors',
-    //             headers: {
-    //                 "Accept": 'application/json',
-    //                 'Content-type': 'application/json'
-    //             },
-    //         }).then(data => JSON.parse(data));
-    //         this.setState({
-    //             companyName: result.companyName,
-    //             role: result.role,
-    //             package: result.package,
-    //             experience: result.experience,
-    //         })
-    //     } catch (e) {
-    //         console.log(e)
-    //     }
-    // }
+    async componentDidMount() {
+        const post_id = this.props.params?.match?.post_id;
+        if (this.props.location?.onUpdatePost) {
+            try {
+                const result = await fetch(`${api_url}/posts/get_single_post?post_id=${post_id}`, {
+                    method: 'get',
+                    mode: 'no-cors',
+                    headers: {
+                        "Accept": 'application/json',
+                        'Content-type': 'application/json'
+                    },
+                })
+                this.setState({
+                    // companyName: result.companyName,
+                    // role: result.role,
+                    // package: result.package,
+                    // experience: result.experience,
+                    companyName: 'Infosys',
+                    role: 'SES',
+                    package: '3.6',
+                    experience: 'isahdhwgf dkjsagd jsdguah jagdjnqa hjsgudwz jhsfdjnC hjgfsje zfmgsf kjsehf dmthe fgshtg 4ejkhtge rtuheg j45khg perience',
+                })
+            } catch (e) {
+                console.log(e)
+            }
+        }
+    }
 
     render() {
         const { errors } = this.state;
@@ -160,7 +194,11 @@ class CreatePost extends Component {
                     <textarea rows='10' cols='50' name='experience' className='exp hideScroll' value={this.state.experience} placeholder='Write your experience here..' onChange={this.handleChange} />
                     <span className="error">{errors.experience.message}</span>
                     <div className="text-center">
-                        <button type='button' onClick={this.handleSubmit} className='btn'>Create</button>
+                        {this.props.location?.onUpdatePost ?
+                            <button type='button' onClick={() => this.handleUpdate(this.props.params?.match?.post_id)} className='btn'>Update</button>
+                            :
+                            <button type='button' onClick={this.handleSubmit} className='btn'>Create</button>
+                        }
                         <button type='button' onClick={this.handleCancel} className='btn'>Cancel</button>
                     </div>
                     {/* <input type='text' placeholder='Company Name' />    */}

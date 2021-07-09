@@ -23,9 +23,9 @@ class Signup extends Component {
             conf_pwd: '',
             errors: {
                 email: { hasError: true, message: '' },
-                regno: { hasError: true, message: ''},
-                uname: { hasError: true, message: ''},
-                curr_company: { hasError: true, message: ''},
+                regno: { hasError: true, message: '' },
+                uname: { hasError: true, message: '' },
+                curr_company: { hasError: true, message: '' },
                 password: { hasError: true, message: '' },
                 conf_pwd: { hasError: true, message: '' },
             }
@@ -49,7 +49,7 @@ class Signup extends Component {
                 }
                 break;
             case 'regno':
-                if (value.length > 2){
+                if (value.length > 2) {
                     errors.regno.hasError = false;
                     errors.regno.message = '';
                 } else {
@@ -58,7 +58,7 @@ class Signup extends Component {
                 }
                 break;
             case 'uname':
-                if (value.length > 0){
+                if (value.length > 0) {
                     errors.uname.hasError = false;
                     errors.uname.message = '';
                 } else {
@@ -67,7 +67,7 @@ class Signup extends Component {
                 }
                 break;
             case 'curr_company':
-                if (value.length >= 3){
+                if (value.length >= 3) {
                     errors.curr_company.hasError = false;
                     errors.curr_company.message = '';
                 } else {
@@ -88,10 +88,10 @@ class Signup extends Component {
                 if (this.state.password === value) {
                     errors.conf_pwd.message = '';
                     errors.conf_pwd.hasError = false;
-                    
+
                 } else {
                     errors.conf_pwd.message = 'passwords are not matched!!!';
-                    errors.conf_pwd.hasError = true; 
+                    errors.conf_pwd.hasError = true;
                 }
                 break;
             default:
@@ -110,86 +110,101 @@ class Signup extends Component {
         return valid;
     };
 
-    async handleSubmit() {
-        try {
-            if (this.validateForm(this.state.errors)) {
-                const result = await fetch(`${api_url}/users/create_user`, {
-                    method: 'post',
-                    mode: 'no-cors',
-                    headers: {
-                        "Accept": 'application/json',
-                        'Content-type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        email: this.state.email,
-                        password: this.state.password,
-                        roll_no: this.state.regno,
-                        current_company: this.state.curr_company,
-                        uname: this.state.uname,
-                    })
-                });
-                console.log(this.state)
-                sessionStorage.setItem('username',this.state.email);
-                sessionStorage.setItem('loggedin',true);
-                this.props.history.push('/')
-                // this.props.history.push('/CreatePost')
-            }
-        } catch (e) {
-            console.log(e)
+    handleSubmit() {
+        // try {
+        if (this.validateForm(this.state.errors)) {
+            // const result = await 
+            fetch(`${api_url}/users/create_user`, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    "Accept": 'application/json',
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: this.state.email,
+                    password: this.state.password,
+                    roll_no: this.state.regno,
+                    current_company: this.state.curr_company,
+                    user_name: this.state.uname,
+                })
+            }).then(res => {
+
+                console.log(res)
+                if (!res.ok) {
+                    throw new Error('Network response was not ok');
+                } else {
+                    return res.json();
+                }
+            }).then(res => {
+                this.props.history.push('/Login')
+                alert('success')
+
+            }).catch(err => {
+                console.log(err);
+                alert('Failed to sign up')
+            });
+            // console.log(this.state)
+            // sessionStorage.setItem('username',this.state.email);
+            // sessionStorage.setItem('loggedin',true);
+            // this.props.history.push('/')
         }
-    // event.preventDefault()
-    // console.log(this.state)
-}
-render() {
-    const { errors } = this.state;
-    return (
-        <div className='row login_signup'>
-            <div className='col-md-6 logo'>
-                <Logo />
-            </div>
-            <div className='col-md-6'>
+        // } catch (e) {
+        //     console.log(e)
+        // }
+        // event.preventDefault()
+        // console.log(this.state)
+    }
+    render() {
+        const { errors } = this.state;
+        return (
+            <div className='row login_signup'>
+                <div className='col-md-6 logo'>
+                    <Logo />
+                </div>
+                <div className='col-md-6'>
 
-                <div className='container fillForm'>
-                    <div className="card">
-                        <p>Sign up for your career</p>
-                        <input type='email' name="email" placeholder="Email" required onChange={this.handleChange} />
-                        <span className="error">{errors.email.message}</span>
-                        <br />
+                    <div className='container fillForm'>
+                        <div className="card">
+                            <p>Sign up for your career</p>
+                            <input type='email' name="email" placeholder="Email" required onChange={this.handleChange} />
+                            <span className="error">{errors.email.message}</span>
+                            <br />
 
-                        <input type='text' name='regno' placeholder='Reg.No' required onChange={this.handleChange} />
-                        <span className="error">{errors.regno.message}</span>
-                        <br />
+                            <input type='text' name='regno' placeholder='Reg.No' required onChange={this.handleChange} />
+                            <span className="error">{errors.regno.message}</span>
+                            <br />
 
-                        <input type='text' name='uname' placeholder='Name' required onChange={this.handleChange} />
-                        <span className="error">{errors.uname.message}</span>
-                        <br />
-                        
-                        <input type='text' name='curr_company' placeholder='current company' required onChange={this.handleChange} />
-                        <span className="error">{errors.curr_company.message}</span>
-                        <br />
-                        
-                        <input type='password' name='password' placeholder='Password' required onChange={this.handleChange} />
-                        <span className="error">{errors.password.message}</span>
-                        <br />
+                            <input type='text' name='uname' placeholder='Name' required onChange={this.handleChange} />
+                            <span className="error">{errors.uname.message}</span>
+                            <br />
 
-                        <input type='password' name='conf_pwd' placeholder='Confirm Password' required onChange={this.handleChange} />
-                        <span className="error">{errors.conf_pwd.message}</span>
-                        <br />
+                            <input type='text' name='curr_company' placeholder='current company' required onChange={this.handleChange} />
+                            <span className="error">{errors.curr_company.message}</span>
+                            <br />
 
-                        <div className="pwd_and_btn">
-                            <button type="button" onClick={this.handleSubmit} className='btn'>
-                                Signup
-                            </button>
-                        </div>
-                        <div className='haveAccount'>
-                            <b>Already have an Account?</b><Link to='/Login' >Login</Link>
+                            <input type='password' name='password' placeholder='Password' required onChange={this.handleChange} />
+                            <span className="error">{errors.password.message}</span>
+                            <br />
+
+                            <input type='password' name='conf_pwd' placeholder='Confirm Password' required onChange={this.handleChange} />
+                            <span className="error">{errors.conf_pwd.message}</span>
+                            <br />
+
+                            <div className="pwd_and_btn">
+                                <button type="button" onClick={this.handleSubmit} className='btn'>
+                                    Signup
+                                </button>
+                            </div>
+                            <div className='haveAccount'>
+                                <b>Already have an Account?</b><Link to='/Login' >Login</Link>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    )
-}
+        )
+    }
 }
 
 export default Signup;

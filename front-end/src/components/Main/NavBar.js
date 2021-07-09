@@ -3,38 +3,38 @@ import { api_url } from '../config';
 import {
     Link
 } from "react-router-dom";
+import { connect } from "react-redux";
 
-export default class NavBar extends React.Component {
+
+class NavBar extends React.Component {
 
     constructor(props) {
-        super(props) 
+        super(props)
         this.state = {
             loggeIn: false
         }
     }
 
     handleLogout = async () => {
-    //     try {
-    //         const result = await fetch(`${api_url}/logout?user_name=${sessionStorage.getItem('username')}`, {
-    //             method: 'get',
-    //             mode: 'no-cors',
-    //             headers: {
-    //                 "Accept": 'application/json',
-    //                 'Content-type': 'application/json'
-    //             },
-    //         });
-    //         sessionStorage.setItem('username', '');
-    //         sessionStorage.setItem('loggedIn', false);
-    //         this.props.history.push({
-    //             pathname: '/',
-    //             fromSearch: true,
-    //             state: JSON.parse(result)
-    //         });
-    //     } catch (e) {
-    //         console.log(e)
-    //     }
-    }
-    componentDidMount() {
+        //     try {
+        //         const result = await fetch(`${api_url}/logout?user_name=${sessionStorage.getItem('username')}`, {
+        //             method: 'get',
+        //             mode: 'no-cors',
+        //             headers: {
+        //                 "Accept": 'application/json',
+        //                 'Content-type': 'application/json'
+        //             },
+        //         });
+        //         sessionStorage.setItem('username', '');
+        //         sessionStorage.setItem('loggedIn', false);
+        //         this.props.history.push({
+        //             pathname: '/',
+        //             fromSearch: true,
+        //             state: JSON.parse(result)
+        //         });
+        //     } catch (e) {
+        //         console.log(e)
+        //     }
     }
 
     render() {
@@ -69,8 +69,14 @@ export default class NavBar extends React.Component {
                         </>
                     }
                 </ul>
+
             </div>
         )
     }
 
 }
+
+export const mapStateToProps = (state) => ({
+    loggedIn: state.MainReducer.loggedIn,
+});
+export default connect(mapStateToProps)(NavBar);
