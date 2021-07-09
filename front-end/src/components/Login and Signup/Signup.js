@@ -3,6 +3,7 @@ import "./Login_and_signup.css";
 import { Link } from "react-router-dom"
 import Logo from '../Logo/Logo';
 import { api_url } from '../config';
+import axios from 'axios';
 
 
 const validEmailRegex = RegExp(
@@ -110,50 +111,55 @@ class Signup extends Component {
         return valid;
     };
 
-    handleSubmit() {
+    handleSubmit = () => {
         // try {
         if (this.validateForm(this.state.errors)) {
             // const result = await 
-            fetch(`${api_url}/users/create_user`, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: {
-                    "Accept": 'application/json',
-                    'Content-type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: this.state.email,
-                    password: this.state.password,
-                    roll_no: this.state.regno,
-                    current_company: this.state.curr_company,
-                    user_name: this.state.uname,
-                })
-            }).then(res => {
 
-                console.log(res)
-                if (!res.ok) {
-                    throw new Error('Network response was not ok');
-                } else {
-                    return res.json();
-                }
-            }).then(res => {
-                this.props.history.push('/Login')
-                alert('success')
-
-            }).catch(err => {
-                console.log(err);
+            axios.post(`${api_url}/users/create_user`, JSON.stringify({
+                email: this.state.email,
+                password: this.state.password,
+                roll_no: this.state.regno,
+                current_company: this.state.curr_company,
+                user_name: this.state.uname,
+            })).then(res => {
+                sessionStorage.setItem('loggedin',JSON.stringify(true))
+                this.props.history.push('/')
+                alert('signup success')
+            }).catch(() => {
                 alert('Failed to sign up')
-            });
-            // console.log(this.state)
-            // sessionStorage.setItem('username',this.state.email);
-            // sessionStorage.setItem('loggedin',true);
-            // this.props.history.push('/')
+            })
+            // fetch(`${api_url}/users/create_user`, {
+            //     method: 'POST',
+            //     mode: 'no-cors',
+            //     headers: {
+            //         "Accept": 'application/json',
+            //         'Content-type': 'application/json'
+            //     },
+            //     body: JSON.stringify({
+            //         email: this.state.email,
+            //         password: this.state.password,
+            //         roll_no: this.state.regno,
+            //         current_company: this.state.curr_company,
+            //         user_name: this.state.uname,
+            //     })
+            // }).then(res => {
+            //     console.log(res)
+            //     if (!res.ok) {
+            //         throw new Error('Network response was not ok');
+            //     } else {
+            //         return res.json();
+            //     }
+            // }).then(res => {
+            //     this.props.history.push('/Login')
+            //     alert('signup success')
+
+            // }).catch(err => {
+            //     console.log(err);
+            //     alert('Failed to sign up')
+            //     // this.props.history.push('/Login')
+            // });
         }
-        // } catch (e) {
-        //     console.log(e)
-        // }
-        // event.preventDefault()
-        // console.log(this.state)
     }
     render() {
         const { errors } = this.state;

@@ -12,115 +12,98 @@ class Profile extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            userData: null,
-            displayMoreOptions: false,
-            posts: [],
+            data: {
+                userData: null,
+                posts: [],
+            }
         }
     }
 
-    handleUpdateProfile = (event) => {
 
-    }
-    handleDeletePost = async () => {
-        try {
-            const result = await fetch(`/${api_url}/posts/delete_post`, {
-                method: 'get',
-                mode: 'no-cors',
-                headers: {
-                    "Accept": 'application/json',
-                    'Content-type': 'application/json'
-                },
-            })
-        } catch (e) {
-            console.log(e)
-        }
-    }
-
-    handleMoreOptionsIcon = () => {
-        console.log("hii");
-        if (!this.state.displayMoreOptions) {
+    componentDidMount() {
+        fetch(`${api_url}/users/get_user?user_name=${JSON.parse(sessionStorage.getItem('username'))}`, {
+            method: 'get',
+            mode: 'no-cors',
+            headers: {
+                "Accept": 'application/json',
+                'Content-type': 'application/json'
+            },
+        }).then(res => {
+            console.log(res)
+            if (!res.ok) {
+                throw new Error('Network response was not ok');
+            } else {
+                return res.json()
+            }
+        }).then(res => {
+            console.log(res)
             this.setState({
-                displayMoreOptions: true
+                data: res
             })
-        } else {
-            this.setState({
-                displayMoreOptions: false
-            })
-        }
-    }
+        }).catch(err => {
+            console.log(err);
+            alert('Failed to create post')
+        });
 
-    async componentDidMount() {
-        try {
-            const result = await fetch(`${api_url}/users/get_user?user_name=${'bhavya'}`, {
-                method: 'get',
-                mode: 'no-cors',
-                headers: {
-                    "Accept": 'application/json',
-                    'Content-type': 'application/json'
-                },
-            });
+        // this.setState({
+        //     // data: JSON.parse(result)
+        //     data:
+        //     {
+        //         user_data: { company: 'company', uname: 'name', regno: '17l31a0500', email: 'email@gmail.com' },
+        //         user_posts: [{ post_id: 1, role: 'role', name: 'xyz', company: 'Company', package: '3.6', experience: "hdgtf dfgjhds bchgf ekszj gfyx jhv bsdhiw auytef ghadv sjzhc lyuc sge js ghbnd ahak duzyg xvsdbna jhyuzc fxgh vdam,b hdliagSC Yukhvj bd,j akwhhu dli" },
+        //         { post_id: 2, role: 'role', name: 'xyz', company: 'Company', package: '3.6', experience: "hdg tfd fgjhd sbch gfeksz jgfyxj hvbsdh iwauyte fghad vsjzhc lyuc sge jsghbnd ahakdu zygxv sdbnaj hyuzc fxghvd am,bh dliagSC Yukh vjbd, jakwh hudli " },
+        //         ]
 
-            this.setState({
-                // data: JSON.parse(result)
-                data:
-                {
-                    user_data: { company: 'company', uname: 'name', regno: '17l31a0500', email: 'email@gmail.com' },
-                    user_posts: [{ post_id: 1, role: 'role', name: 'xyz', company: 'Company', package: '3.6', experience: "hdgtf dfgjhds bchgf ekszj gfyx jhv bsdhiw auytef ghadv sjzhc lyuc sge js ghbnd ahak duzyg xvsdbna jhyuzc fxgh vdam,b hdliagSC Yukhvj bd,j akwhhu dli" },
-                    {post_id: 2, role: 'role', name: 'xyz', company: 'Company', package: '3.6', experience: "hdg tfd fgjhd sbch gfeksz jgfyxj hvbsdh iwauyte fghad vsjzhc lyuc sge jsghbnd ahakdu zygxv sdbnaj hyuzc fxghvd am,bh dliagSC Yukh vjbd, jakwh hudli " },
-                    ]
-
-                }
-            })
-        } catch (e) {
-            console.log(e)
-        }
-
+        //     }
+        // })
     }
     render() {
-        const userData = this.state.data?.user_data ? this.state.data.user_data : null;
-        console.log(userData)
+        // const userData = this.state.data?.user_data ? this.state.data.user_data : null;
+        // console.log(userData)
 
-        const posts = this.state.data?.user_posts ? this.state.data.user_posts : [];
-        console.log(posts)
-        if (userData) {
-            return (
-                <div className='profile-page hideScroll'>
-                    <div className='profile-holder mb-3'>
-                        <div className='profile'>
-                            <AccountCircleIcon style={{ fontSize: 150, color: "rgb(255, 255, 200)" }} />
-                            <br />
-                            <button type='button' className='btn' onclick={this.handleUpdateProfile}>Update</button>
-                        </div>
-                        <div className='details'>
-                            <table border='0' style={{ width: '400px' }}>
-                                <tr>
-                                    <th>Name:</th>
-                                    <td>{userData.uname}</td>
-                                </tr>
-                                <tr>
-                                    <th>Email:</th>
-                                    <td>{userData.email}</td>
-                                </tr>
-                                <tr>
-                                    <th>Company:</th>
-                                    <td>{userData.company}</td>
-                                </tr>
-                                <tr>
-                                    <th>Reg.No:</th>
-                                    <td>{userData.regno}</td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    {/* for posts */}
-                    {posts &&
-                        <Home fromProfile={true} postsData={posts}/>
-                    }
-                </div>
-            )
-        } else {
-            return null;
-        }
+        // const posts = this.state.data?.user_posts ? this.state.data.user_posts : [];
+        // console.log(posts)
+        // if (userData) {
+        //     return (
+        //         <div className='profile-page hideScroll'>
+        //             <div className='profile-holder mb-3'>
+        //                 <div className='profile'>
+        //                     <AccountCircleIcon style={{ fontSize: 150, color: "rgb(255, 255, 200)" }} />
+        //                     <br />
+        //                     <button type='button' className='btn' onclick={this.handleUpdateProfile}>Update</button>
+        //                 </div>
+        //                 <div className='details'>
+        //                     <table border='0' style={{ width: '400px' }}>
+        //                         <tr>
+        //                             <th>Name:</th>
+        //                             <td>{userData.user_name}</td>
+        //                         </tr>
+        //                         <tr>
+        //                             <th>Email:</th>
+        //                             <td>{userData.email}</td>
+        //                         </tr>
+        //                         <tr>
+        //                             <th>Company:</th>
+        //                             <td>{userData.current_company}</td>
+        //                         </tr>
+        //                         <tr>
+        //                             <th>Reg.No:</th>
+        //                             <td>{userData.regno}</td>
+        //                         </tr>
+        //                     </table>
+        //                 </div>
+        //             </div>
+        //             {/* for posts */}
+        //             {posts &&
+        //                 <Home fromProfile={true} postsData={posts} />
+        //             }
+        //         </div>
+        //     )
+        // } else {
+        //     return null;
+        // }
+        // }
+        return null;
     }
 }
 

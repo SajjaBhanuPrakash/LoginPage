@@ -4,6 +4,7 @@ import {
     Link
 } from "react-router-dom";
 import { connect } from "react-redux";
+import * as Actions from '../../ActionCreator';
 
 
 class NavBar extends React.Component {
@@ -16,26 +17,28 @@ class NavBar extends React.Component {
     }
 
     handleLogout = async () => {
-        //     try {
-        //         const result = await fetch(`${api_url}/logout?user_name=${sessionStorage.getItem('username')}`, {
-        //             method: 'get',
-        //             mode: 'no-cors',
-        //             headers: {
-        //                 "Accept": 'application/json',
-        //                 'Content-type': 'application/json'
-        //             },
-        //         });
-        //         sessionStorage.setItem('username', '');
-        //         sessionStorage.setItem('loggedIn', false);
-        //         this.props.history.push({
-        //             pathname: '/',
-        //             fromSearch: true,
-        //             state: JSON.parse(result)
-        //         });
-        //     } catch (e) {
-        //         console.log(e)
-        //     }
+        this.props.handleLogout();
+        // try {
+        //     const result = await fetch(`${api_url}/logout?user_name=${sessionStorage.getItem('username')}`, {
+        //         method: 'get',
+        //         mode: 'no-cors',
+        //         headers: {
+        //             "Accept": 'application/json',
+        //             'Content-type': 'application/json'
+        //         },
+        //     });
+        //     sessionStorage.setItem('username', '');
+        //     sessionStorage.setItem('loggedIn', false);
+        //     this.props.history.push({
+        //         pathname: '/',
+        //         fromSearch: true,
+        //         state: JSON.parse(result)
+        //     });
+        // } catch (e) {
+        //     console.log(e)
+        // }
     }
+
 
     render() {
         const loggedIn = JSON.parse(sessionStorage.getItem('loggedin'))
@@ -76,7 +79,12 @@ class NavBar extends React.Component {
 
 }
 
+export const mapDispatchToProps = (dispatch, ownProps) => ({
+    handleLogout: () => {
+        dispatch(Actions.handleLogout(ownProps));
+    },
+})
 export const mapStateToProps = (state) => ({
     loggedIn: state.MainReducer.loggedIn,
 });
-export default connect(mapStateToProps)(NavBar);
+export default connect(mapStateToProps, mapDispatchToProps)(NavBar);

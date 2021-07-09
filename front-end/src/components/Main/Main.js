@@ -136,9 +136,9 @@ export default function Main(props) {
         setInput(event.target.value)
     }
 
-    const handleSearch = async () => {
+    const handleSearch = () => {
         try {
-            const result = await fetch(`${api_url}/posts/get_posts_by_company_name?company_name=${input}`, {
+            fetch(`${api_url}/post/get_posts_by_company_name?company_name=${input}`, {
                 method: 'get',
                 mode: 'no-cors',
                 headers: {
@@ -153,13 +153,13 @@ export default function Main(props) {
     }
 
     useEffect(() => {
-        sessionStorage.setItem('username', '')
-        sessionStorage.setItem('loggedin', false)
-        console.log('useeffect called')
+        sessionStorage.setItem('username', JSON.stringify(''))
+        // sessionStorage.setItem('loggedin', false)
+        // console.log('useeffect called')
         // loggedin = JSON.parse(sessionStorage.getItem('loggedin'));
         // const fetchData = async () => {
         //     try {
-        //         await fetch(`${api_url}/posts/get_all_company_names`, {
+        //         await fetch(`${api_url}/post/get_all_company_names`, {
         //             method: 'get',
         //             mode: 'no-cors',
         //             headers: {

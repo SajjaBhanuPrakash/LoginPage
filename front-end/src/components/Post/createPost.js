@@ -8,10 +8,10 @@ class CreatePost extends Component {
         super(props)
 
         this.state = {
-            companyName: '',
+            company_name: '',
             role: '',
             package: '',
-            experience: '',
+            post_description: '',
             errors: {
                 role: { hasError: true, message: '' },
                 package: { hasError: true, message: '' },
@@ -34,14 +34,6 @@ class CreatePost extends Component {
         event.preventDefault();
         const { name, value } = event.target;
         let errors = this.state.errors;
-
-        // if (value.length > 0) {
-        //     errors.name.message = '';
-        //     errors.name.hasError = false;
-        // } else {
-        //     errors.name.message = 'Fill this field';
-        //     errors.name.hasError = true;
-        // }
         switch (name) {
             case 'role':
                 if (value.length > 0) {
@@ -54,11 +46,11 @@ class CreatePost extends Component {
                 break;
             case 'companyName':
                 if (value.length > 0) {
-                    errors.companyName.message = '';
-                    errors.companyName.hasError = false;
+                    errors.company_name.message = '';
+                    errors.company_name.hasError = false;
                 } else {
-                    errors.companyName.message = 'Fill this field';
-                    errors.companyName.hasError = true;
+                    errors.company_name.message = 'Fill this field';
+                    errors.company_name.hasError = true;
                 }
                 break;
             case 'package':
@@ -72,11 +64,11 @@ class CreatePost extends Component {
                 break;
             case 'experience':
                 if (value.length > 0) {
-                    errors.experience.message = '';
-                    errors.experience.hasError = false;
+                    errors.post_description.message = '';
+                    errors.post_description.hasError = false;
                 } else {
-                    errors.experience.message = 'Fill this field';
-                    errors.experience.hasError = true;
+                    errors.post_description.message = 'Fill this field';
+                    errors.post_description.hasError = true;
                 }
                 break;
             default:
@@ -95,84 +87,99 @@ class CreatePost extends Component {
     };
 
     async handleUpdate() {
-        try {
-            if (this.validateForm(this.state.errors)) {
-                const result = await fetch(`${api_url}/posts/update_post`, {
-                    method: 'post',
-                    mode: 'no-cors',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        author: JSON.parse(sessionStorage.getItem('username')),
-                        role: this.state.role,
-                        company_name: this.state.companyName,
-                        post_description: this.state.experience,
-                        package: this.state.package,
-                    })
-                });
-
-                this.props.history.push('/Profile')
-            }
-
-        } catch (e) {
-            console.log(e)
+        if (this.validateForm(this.state.errors)) {
+            fetch(`${api_url}/post/update_post`, {
+                method: 'post',
+                mode: 'no-cors',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    author: JSON.parse(sessionStorage.getItem('username')),
+                    role: this.state.role,
+                    company_name: this.state.companyName,
+                    post_description: this.state.experience,
+                    package: this.state.package,
+                })
+            }).then(res => {
+                console.log(res)
+                if (!res.ok) {
+                    throw new Error('Network response was not ok');
+                } else {
+                    this.props.history.push('/Profile')
+                    alert('post updated successfully')
+                }
+            }).catch(err => {
+                console.log(err);
+                alert('Failed to update post')
+            });
         }
     }
 
-    async handleSubmit() {
-        try {
-            if (this.validateForm(this.state.errors)) {
-                const result = await fetch(`${api_url}/posts/create_post`, {
-                    method: 'post',
-                    mode: 'no-cors',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        author: JSON.parse(sessionStorage.getItem('username')),
-                        role: this.state.role,
-                        company_name: this.state.companyName,
-                        post_description: this.state.experience,
-                        package: this.state.package,
-                    })
-                });
-
-                this.props.history.push('/')
-            }
-
-        } catch (e) {
-            console.log(e)
+    handleSubmit() {
+        if (this.validateForm(this.state.errors)) {
+            fetch(`${api_url}/post/create_post`, {
+                method: 'post',
+                mode: 'no-cors',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    author: JSON.parse(sessionStorage.getItem('username')),
+                    role: this.state.role,
+                    company_name: this.state.companyName,
+                    post_description: this.state.experience,
+                    package: this.state.package,
+                })
+            }).then(res => {
+                console.log(res)
+                if (!res.ok) {
+                    throw new Error('Network response was not ok');
+                } else {
+                    this.props.history.push('/Profile')
+                    alert('post created successfully')
+                }
+            }).catch(err => {
+                console.log(err);
+                alert('Failed to create post')
+            });
         }
     }
 
-    async componentDidMount() {
+    handleGetPostData = (post_id) => {
+        fetch(`${api_url}/post/get_single_post?post_id=${post_id}`, {
+            method: 'get',
+            mode: 'no-cors',
+            headers: {
+                "Accept": 'application/json',
+                'Content-type': 'application/json'
+            },
+        }).then(res => {
+            console.log(res)
+            if (!res.ok) {
+                throw new Error('Network response was not ok');
+            } else {
+                return res.json()
+            }
+        }).then(res => {
+            this.setState({
+                company_name : res.company_name,
+                role: res.role,
+                package: res.package,
+                post_description: res.post_description,
+            })
+        }).catch(err => {
+            console.log(err);
+            alert('Failed to create post')
+        });
+    }
+
+    componentDidMount() {
         const post_id = this.props.params?.match?.post_id;
         if (this.props.location?.onUpdatePost) {
-            try {
-                const result = await fetch(`${api_url}/posts/get_single_post?post_id=${post_id}`, {
-                    method: 'get',
-                    mode: 'no-cors',
-                    headers: {
-                        "Accept": 'application/json',
-                        'Content-type': 'application/json'
-                    },
-                })
-                this.setState({
-                    // companyName: result.companyName,
-                    // role: result.role,
-                    // package: result.package,
-                    // experience: result.experience,
-                    companyName: 'Infosys',
-                    role: 'SES',
-                    package: '3.6',
-                    experience: 'isahdhwgf dkjsagd jsdguah jagdjnqa hjsgudwz jhsfdjnC hjgfsje zfmgsf kjsehf dmthe fgshtg 4ejkhtge rtuheg j45khg perience',
-                })
-            } catch (e) {
-                console.log(e)
-            }
+            this.handleGetPostData(post_id)
         }
     }
 

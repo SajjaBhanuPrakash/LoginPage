@@ -18,30 +18,34 @@ class Login extends Component {
         super(props)
 
         this.state = {
-            email: '',
+            user_name: '',
             password: '',
             errors: {
-                email: { hasError: true, message: '' },
+                user_name: { hasError: true, message: '' },
                 password: { hasError: true, message: '' }
             }
         }
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
-
+    validateForm = errors => {
+        const temp = Object.values(errors);
+        const valid = !temp.some(val => val.hasError);
+        console.log(valid)
+        return valid;
+    };
 
     handleChange = (event) => {
         event.preventDefault();
         const { name, value } = event.target;
         let errors = this.state.errors;
-
+        // console.log('from login handle Change')
         switch (name) {
-            case 'email':
-                if (validEmailRegex.test(value)) {
-                    errors.email.message = '';
-                    errors.email.hasError = false;
+            case 'user_name':
+                if (value.length>0) {
+                    errors.user_name.message = '';
+                    errors.user_name.hasError = false;
                 } else {
-                    errors.email.message = 'Email is not valid!';
-                    errors.email.hasError = true;
+                    errors.user_name.message = 'Fill this field';
+                    errors.user_name.hasError = true;
                 }
                 break;
             case 'password':
@@ -57,23 +61,15 @@ class Login extends Component {
                 break;
         }
         this.setState({
-            errors,
+            errors: errors,
             [name]: value
         })
 
-        // console.log(this.state)
-
     }
 
-    validateForm = errors => {
-        const temp = Object.values(errors);
-        const valid = !temp.some(val => val.hasError);
-        return valid;
-    };
-
-    async handleSubmit() {
+    handleSubmit = () => {
         if (this.validateForm(this.state.errors)) {
-            const data = { user_name: this.state.email, password: this.state.password }
+            const data = { user_name: this.state.user_name, password: this.state.password }
             this.props.loginAPI(data);
             // try {
             //     const result = await fetch(`${api_url}/login?user_name = ${this.state.email} & password=${this.state.password}`, {
@@ -105,8 +101,8 @@ class Login extends Component {
                     <div className='container fillForm'>
                         <div className="card">
                             <p>Login to your Account</p>
-                            <input type='email' name="email" placeholder="Email.." required onChange={this.handleChange} />
-                            <span className="error">{errors.email.message}</span>
+                            <input type='email' name="user_name" placeholder="User Name" required onChange={this.handleChange} />
+                            <span className="error">{errors.user_name.message}</span>
                             <br />
 
                             <input type='password' name='password' placeholder='Password..' required onChange={this.handleChange} />
