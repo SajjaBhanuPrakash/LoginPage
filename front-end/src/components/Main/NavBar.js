@@ -16,7 +16,7 @@ class NavBar extends React.Component {
         }
     }
 
-    handleLogout = async () => {
+    handleLogout = () => {
         this.props.handleLogout();
         // try {
         //     const result = await fetch(`${api_url}/logout?user_name=${sessionStorage.getItem('username')}`, {

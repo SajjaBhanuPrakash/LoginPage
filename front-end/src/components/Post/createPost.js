@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './createPost.css';
 import { api_url } from '../config';
+import axios from 'axios';
 
 class CreatePost extends Component {
 
@@ -15,8 +16,8 @@ class CreatePost extends Component {
             errors: {
                 role: { hasError: true, message: '' },
                 package: { hasError: true, message: '' },
-                companyName: { hasError: true, message: '' },
-                experience: { hasError: true, message: '' }
+                company_name: { hasError: true, message: '' },
+                post_description: { hasError: true, message: '' }
             }
         }
 
@@ -44,7 +45,7 @@ class CreatePost extends Component {
                     errors.role.hasError = true;
                 }
                 break;
-            case 'companyName':
+            case 'company_name':
                 if (value.length > 0) {
                     errors.company_name.message = '';
                     errors.company_name.hasError = false;
@@ -62,7 +63,7 @@ class CreatePost extends Component {
                     errors.package.hasError = true;
                 }
                 break;
-            case 'experience':
+            case 'post_description':
                 if (value.length > 0) {
                     errors.post_description.message = '';
                     errors.post_description.hasError = false;
@@ -86,98 +87,75 @@ class CreatePost extends Component {
         return valid;
     };
 
-    async handleUpdate() {
+    handleUpdate = (post_id) => {
         if (this.validateForm(this.state.errors)) {
-            fetch(`${api_url}/post/update_post`, {
-                method: 'post',
-                mode: 'no-cors',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-type': 'application/json'
-                },
-                body: JSON.stringify({
-                    author: JSON.parse(sessionStorage.getItem('username')),
-                    role: this.state.role,
-                    company_name: this.state.companyName,
-                    post_description: this.state.experience,
-                    package: this.state.package,
-                })
-            }).then(res => {
-                console.log(res)
-                if (!res.ok) {
-                    throw new Error('Network response was not ok');
-                } else {
-                    this.props.history.push('/Profile')
-                    alert('post updated successfully')
-                }
+            axios.post(`${api_url}/post/update_post`, JSON.stringify({
+                post_id: post_id,
+                author: JSON.parse(sessionStorage.getItem('username')),
+                role: this.state.role,
+                company_name: this.state.companyName,
+                post_description: this.state.experience,
+                package: this.state.package,
+            })).then(res => {
+                // this.handleGetPostData(post_id)
+                this.props.history.push('/Profile')
+                console.log('post updated successfully')
             }).catch(err => {
-                console.log(err);
                 alert('Failed to update post')
             });
         }
+        else {
+            console.log('not valid')
+        }
     }
 
-    handleSubmit() {
+    handleSubmit = () => {
         if (this.validateForm(this.state.errors)) {
-            fetch(`${api_url}/post/create_post`, {
-                method: 'post',
-                mode: 'no-cors',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-type': 'application/json'
-                },
-                body: JSON.stringify({
-                    author: JSON.parse(sessionStorage.getItem('username')),
-                    role: this.state.role,
-                    company_name: this.state.companyName,
-                    post_description: this.state.experience,
-                    package: this.state.package,
-                })
-            }).then(res => {
-                console.log(res)
-                if (!res.ok) {
-                    throw new Error('Network response was not ok');
-                } else {
-                    this.props.history.push('/Profile')
-                    alert('post created successfully')
-                }
+            axios.post(`${api_url}/post/create_post`, JSON.stringify({
+                author: JSON.parse(sessionStorage.getItem('username')),
+                role: this.state.role,
+                company_name: this.state.company_name,
+                post_description: this.state.post_description,
+                package: this.state.package,
+            })).then(res => {
+                this.props.history.push('/Profile')
+                console.log('post created successfully')
             }).catch(err => {
-                console.log(err);
                 alert('Failed to create post')
             });
+        }
+        else {
+            console.log('not valid')
         }
     }
 
     handleGetPostData = (post_id) => {
-        fetch(`${api_url}/post/get_single_post?post_id=${post_id}`, {
-            method: 'get',
-            mode: 'no-cors',
-            headers: {
-                "Accept": 'application/json',
-                'Content-type': 'application/json'
-            },
-        }).then(res => {
-            console.log(res)
-            if (!res.ok) {
-                throw new Error('Network response was not ok');
-            } else {
-                return res.json()
-            }
-        }).then(res => {
+        axios.get(`${api_url}/post/get_single_post?post_id=${post_id}`)
+        .then(result => {
+            const res = result.data[0]
+            // console.log('get single post')
+            // console.log(result)
             this.setState({
-                company_name : res.company_name,
+                company_name: res.company_name,
                 role: res.role,
                 package: res.package,
                 post_description: res.post_description,
+                errors: {
+                    role: { hasError: false, message: '' },
+                    package: { hasError: false, message: '' },
+                    company_name: { hasError: false, message: '' },
+                    post_description: { hasError: false, message: '' }
+                }
             })
         }).catch(err => {
             console.log(err);
-            alert('Failed to create post')
+            alert('Failed to get post')
         });
+        
     }
 
     componentDidMount() {
-        const post_id = this.props.params?.match?.post_id;
+        const post_id = this.props.location?.state;
         if (this.props.location?.onUpdatePost) {
             this.handleGetPostData(post_id)
         }
@@ -190,19 +168,19 @@ class CreatePost extends Component {
                 <div className='row content'>
                     <p className='h2'>Create New Post</p>
                     <div className='inputfields'>
-                        <input type='text' name='companyName' placeholder='Company Name' value={this.state.companyName} onChange={this.handleChange} />
-                        <span className="error">{errors.companyName.message}</span>
+                        <input type='text' name='company_name' placeholder='Company Name' value={this.state.company_name} onChange={this.handleChange} />
+                        <span className="error">{errors.company_name.message}</span>
                         <input type='text' name='role' placeholder='Role' value={this.state.role} onChange={this.handleChange} />
                         <span className="error">{errors.role.message}</span>
                         <input type='text' name='package' placeholder='Package' value={this.state.package} onChange={this.handleChange} />
                         <span className="error">{errors.package.message}</span>
                     </div>
-                    <label for='experience' className='h4'>Experience</label><br />
-                    <textarea rows='10' cols='50' name='experience' className='exp hideScroll' value={this.state.experience} placeholder='Write your experience here..' onChange={this.handleChange} />
-                    <span className="error">{errors.experience.message}</span>
+                    <label for='post_description' className='h4'>Experience</label><br />
+                    <textarea rows='10' cols='50' name='post_description' className='exp hideScroll' value={this.state.post_description} placeholder='Write your experience here..' onChange={this.handleChange} />
+                    <span className="error">{errors.post_description.message}</span>
                     <div className="text-center">
                         {this.props.location?.onUpdatePost ?
-                            <button type='button' onClick={() => this.handleUpdate(this.props.params?.match?.post_id)} className='btn'>Update</button>
+                            <button type='button' onClick={() => this.handleUpdate(this.props.location?.state)} className='btn'>Update</button>
                             :
                             <button type='button' onClick={this.handleSubmit} className='btn'>Create</button>
                         }
@@ -216,3 +194,86 @@ class CreatePost extends Component {
 }
 
 export default CreatePost;
+
+// fetch(`${api_url}/post/create_post`, {
+//     method: 'post',
+//     mode: 'no-cors',
+//     headers: {
+//         'Accept': 'application/json',
+//         'Content-type': 'application/json'
+//     },
+//     body: JSON.stringify({
+//         author: JSON.parse(sessionStorage.getItem('username')),
+//         role: this.state.role,
+//         company_name: this.state.companyName,
+//         post_description: this.state.experience,
+//         package: this.state.package,
+//     })
+// }).then(res => {
+//     console.log(res)
+//     if (!res.ok) {
+//         throw new Error('Network response was not ok');
+//     } else {
+//         this.props.history.push('/Profile')
+//         console.log('post created successfully')
+//     }
+// }).catch(err => {
+//     console.log(err);
+//     alert('Failed to create post')
+// });
+
+
+// fetch(`${api_url}/post/update_post`, {
+//     method: 'post',
+//     mode: 'no-cors',
+//     headers: {
+//         'Accept': 'application/json',
+//         'Content-type': 'application/json'
+//     },
+//     body: JSON.stringify({
+//         author: JSON.parse(sessionStorage.getItem('username')),
+//         role: this.state.role,
+//         company_name: this.state.companyName,
+//         post_description: this.state.experience,
+//         package: this.state.package,
+//     })
+// }).then(res => {
+//     console.log(res)
+//     if (!res.ok) {
+//         throw new Error('Network response was not ok');
+//     } else {
+//         this.props.history.push('/Profile')
+//         console.log('post updated successfully')
+//     }
+// }).catch(err => {
+//     console.log(err);
+//     alert('Failed to update post')
+// });
+
+
+
+// fetch(`${api_url}/post/get_single_post?post_id=${post_id}`, {
+//     method: 'get',
+//     mode: 'no-cors',
+//     headers: {
+//         "Accept": 'application/json',
+//         'Content-type': 'application/json'
+//     },
+// }).then(res => {
+//     console.log(res)
+//     if (!res.ok) {
+//         throw new Error('Network response was not ok');
+//     } else {
+//         return res.json()
+//     }
+// }).then(res => {
+//     this.setState({
+//         company_name: res.company_name,
+//         role: res.role,
+//         package: res.package,
+//         post_description: res.post_description,
+//     })
+// }).catch(err => {
+//     console.log(err);
+//     alert('Failed to create post')
+// });

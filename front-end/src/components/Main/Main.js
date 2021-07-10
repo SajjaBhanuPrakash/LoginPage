@@ -22,7 +22,7 @@ import NavBar from './NavBar';
 import {
     Switch,
     Route,
-    Link
+    Link,
 } from "react-router-dom";
 import "./Main.css"
 import Home from '../Home/home.js'
@@ -35,6 +35,9 @@ import ResetPassword from '../Password/resetPassword';
 import ChangePassword from '../Password/changePassword';
 import CreatePost from '../Post/createPost';
 import Profile from '../profile/profile';
+import axios from 'axios';
+import { withRouter } from 'react-router';
+
 
 const drawerWidth = 240;
 
@@ -118,7 +121,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function Main(props) {
+function Main(props) {
     const classes = useStyles();
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
@@ -131,29 +134,28 @@ export default function Main(props) {
     const handleDrawerClose = () => {
         setOpen(false);
     };
-   
+
     const handleChange = (event) => {
         setInput(event.target.value)
     }
 
     const handleSearch = () => {
-        try {
-            fetch(`${api_url}/post/get_posts_by_company_name?company_name=${input}`, {
-                method: 'get',
-                mode: 'no-cors',
-                headers: {
-                    "Accept": 'application/json',
-                    'Content-type': 'application/json'
-                },
-            });
-            props.history.push('/');
-        } catch (e) {
-            console.log(e)
-        }
+        axios.get(`${api_url}/post/get_posts_by_company_name?company_name=${input}`)
+            .then(res => {
+                console.log('inside', res.data)
+                props.history.push({
+                    pathname: '/',
+                    fromSearch: true,
+                    state: res.data
+                });
+            }).catch(() => {
+                console.log('failed to get data on search')
+            })
+
     }
 
     useEffect(() => {
-        sessionStorage.setItem('username', JSON.stringify(''))
+        // sessionStorage.setItem('username', JSON.stringify(''))
         // sessionStorage.setItem('loggedin', false)
         // console.log('useeffect called')
         // loggedin = JSON.parse(sessionStorage.getItem('loggedin'));
@@ -201,7 +203,7 @@ export default function Main(props) {
                             {/* <div className={classes.menuItems}> */}
                             <div className='searchBar'>
                                 <input onChange={handleChange} placeholder='Search by Company Name' />
-                                <SearchIcon onClick={handleSearch} className='searchicon' />
+                                <SearchIcon onClick={handleSearch} style={{ cursor: 'pointer' }} className='searchicon' />
                             </div>
                             <NavBar />
                         </div>
@@ -268,3 +270,5 @@ export default function Main(props) {
         </>
     );
 }
+
+export default withRouter(Main)

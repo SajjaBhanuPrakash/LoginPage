@@ -19,13 +19,13 @@ class Signup extends Component {
             email: '',
             password: '',
             regno: '',
-            uname: '',
+            user_name: '',
             curr_comapny: '',
             conf_pwd: '',
             errors: {
                 email: { hasError: true, message: '' },
                 regno: { hasError: true, message: '' },
-                uname: { hasError: true, message: '' },
+                user_name: { hasError: true, message: '' },
                 curr_company: { hasError: true, message: '' },
                 password: { hasError: true, message: '' },
                 conf_pwd: { hasError: true, message: '' },
@@ -58,13 +58,13 @@ class Signup extends Component {
                     errors.regno.message = 'length should be greater than 2';
                 }
                 break;
-            case 'uname':
+            case 'user_name':
                 if (value.length > 0) {
-                    errors.uname.hasError = false;
-                    errors.uname.message = '';
+                    errors.user_name.hasError = false;
+                    errors.user_name.message = '';
                 } else {
-                    errors.uname.hasError = true;
-                    errors.uname.message = 'username should not be null';
+                    errors.user_name.hasError = true;
+                    errors.user_name.message = 'username should not be null';
                 }
                 break;
             case 'curr_company':
@@ -110,55 +110,37 @@ class Signup extends Component {
         const valid = !temp.some(val => val.hasError);
         return valid;
     };
+    handleAddUserInterests = (company_name) => {
+        axios.post(`${api_url}/users/add_to_user_interests`, JSON.stringify({
+            company_name: company_name,
+            user_name: JSON.parse(sessionStorage.getItem('username'))
+        })).then(res => {
+            console.log('User interest added successfully')
+        }).catch(() => {
+            alert('failed to adda user Interest')
+        })
+    }
 
     handleSubmit = () => {
         // try {
         if (this.validateForm(this.state.errors)) {
             // const result = await 
-
+            // console.log('hiii')
             axios.post(`${api_url}/users/create_user`, JSON.stringify({
                 email: this.state.email,
                 password: this.state.password,
                 roll_no: this.state.regno,
                 current_company: this.state.curr_company,
-                user_name: this.state.uname,
+                user_name: this.state.user_name,
             })).then(res => {
-                sessionStorage.setItem('loggedin',JSON.stringify(true))
-                this.props.history.push('/')
-                alert('signup success')
+                // sessionStorage.setItem('loggedin',JSON.stringify(true))
+                // sessionStorage.setItem('username',JSON.stringify(this.state.user_name))
+                this.handleAddUserInterests(this.state.curr_company)
+                this.props.history.push('/Login')
+                // alert('signup success')
             }).catch(() => {
                 alert('Failed to sign up')
             })
-            // fetch(`${api_url}/users/create_user`, {
-            //     method: 'POST',
-            //     mode: 'no-cors',
-            //     headers: {
-            //         "Accept": 'application/json',
-            //         'Content-type': 'application/json'
-            //     },
-            //     body: JSON.stringify({
-            //         email: this.state.email,
-            //         password: this.state.password,
-            //         roll_no: this.state.regno,
-            //         current_company: this.state.curr_company,
-            //         user_name: this.state.uname,
-            //     })
-            // }).then(res => {
-            //     console.log(res)
-            //     if (!res.ok) {
-            //         throw new Error('Network response was not ok');
-            //     } else {
-            //         return res.json();
-            //     }
-            // }).then(res => {
-            //     this.props.history.push('/Login')
-            //     alert('signup success')
-
-            // }).catch(err => {
-            //     console.log(err);
-            //     alert('Failed to sign up')
-            //     // this.props.history.push('/Login')
-            // });
         }
     }
     render() {
@@ -181,8 +163,8 @@ class Signup extends Component {
                             <span className="error">{errors.regno.message}</span>
                             <br />
 
-                            <input type='text' name='uname' placeholder='Name' required onChange={this.handleChange} />
-                            <span className="error">{errors.uname.message}</span>
+                            <input type='text' name='user_name' placeholder='User Name' required onChange={this.handleChange} />
+                            <span className="error">{errors.user_name.message}</span>
                             <br />
 
                             <input type='text' name='curr_company' placeholder='current company' required onChange={this.handleChange} />
@@ -214,3 +196,34 @@ class Signup extends Component {
 }
 
 export default Signup;
+
+// fetch(`${api_url}/users/create_user`, {
+            //     method: 'POST',
+            //     mode: 'no-cors',
+            //     headers: {
+            //         "Accept": 'application/json',
+            //         'Content-type': 'application/json'
+            //     },
+            //     body: JSON.stringify({
+            //         email: this.state.email,
+            //         password: this.state.password,
+            //         roll_no: this.state.regno,
+            //         current_company: this.state.curr_company,
+            //         user_name: this.state.uname,
+            //     })
+            // }).then(res => {
+            //     console.log(res)
+            //     if (!res.ok) {
+            //         throw new Error('Network response was not ok');
+            //     } else {
+            //         return res.json();
+            //     }
+            // }).then(res => {
+            //     this.props.history.push('/Login')
+            //     alert('signup success')
+
+            // }).catch(err => {
+            //     console.log(err);
+            //     alert('Failed to sign up')
+            //     // this.props.history.push('/Login')
+            // });

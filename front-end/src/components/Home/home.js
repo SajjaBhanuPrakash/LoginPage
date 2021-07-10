@@ -12,6 +12,7 @@ class Home extends Component {
         super(props)
 
         this.state = {
+            isLoading: true,
             myData: [],
         }
     }
@@ -21,38 +22,50 @@ class Home extends Component {
             pathname: `/InterviewInfo/${post_id}`,
         });
     }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.location.fromSearch !== prevProps.location.fromSearch) {
+            this.setState({
+                isLoading: false,
+                myData: this.props.location.state,
+            });
+        }
+    }
+
     componentDidMount() {
         if (this.props.location?.fromSearch) {
             this.setState({
                 myData: this.props.location.state,
             });
-            alert('from Search')
-        }
-        else if (JSON.parse(sessionStorage.getItem('loggedin'))) {
-            axios.get(`${api_url}/post/get_user_interested_posts?user_name=${JSON.parse(sessionStorage.getItem('username'))}`)
-                .then(res => {
-                    alert('after Logged in successfully');
-                    this.setState({
-                        myData: res.data
-                    })
-                }).catch(err => {
-                    alert('Failed to get data on login');
-                });
+            console.log('from Search')
         } else if (this.props.fromProfile) {
             this.setState({
                 myData: this.props.postsData
             });
-            alert('from profile');
+            console.log('from profile');
+        } else if (JSON.parse(sessionStorage.getItem('loggedin'))) {
+            axios.get(`${api_url}/post/get_user_interested_posts?user_name=${JSON.parse(sessionStorage.getItem('username'))}`)
+                .then(res => {
+                    console.log(res)
+                    console.log('after Logged in successfully');
+                    this.setState({
+                        isLoading: false,
+                        myData: res.data
+                    })
+                }).catch(err => {
+                    console.log('Failed to get data on login');
+                });
         } else {
             axios.get(`${api_url}/post/get_all_posts`)
                 .then(res => {
                     // alert('before login');
                     console.log(res)
                     this.setState({
+                        isLoading: false,
                         myData: res.data
                     })
                 }).catch(err => {
-                    alert('Failed to get before login');
+                    console.log('Failed to get before login');
                 });
         }
     }
@@ -60,25 +73,23 @@ class Home extends Component {
         // const r = confirm('Are you sure? Delete the post');
         // if (r == true) {}
         alert('are you sure');
-        fetch(`${api_url}/post/delete_post?post_id=${post_id}`, {
-            method: 'get',
-            mode: 'no-cors',
-            headers: {
-                "Accept": 'application/json',
-                'Content-type': 'application/json'
-            },
-        }).then(res => {
-            console.log(res);
-            if (!res.ok) {
-                throw new Error('Network response was not ok');
-            } else {
-                return res.json();
-            }
-        }).then(res => {
-            this.props.history.push('/Profile');
-        }).catch(err => {
-            alert('Failed to delete Post');
-        });
+        axios.get(`${api_url}/post/delete_post?post_id=${post_id}`)
+            .then(res => {
+                console.log('post deleted successfully')
+                axios.get(`${api_url}/users/get_user?user_name=${JSON.parse(sessionStorage.getItem('username'))}`)
+                    .then(res => {
+                        console.log(res)
+                        this.setState({
+                            isLoading: false,
+                            myData: res.data.user_posts
+                        })
+                    }).catch(err => {
+                        console.log(err);
+                        alert('Failed to get user profile')
+                    });
+            }).catch(err => {
+                alert('Failed to delete Post');
+            });
     }
     handleUpdatePost = (post_id) => {
         this.props.history.push({
@@ -88,6 +99,17 @@ class Home extends Component {
         })
     }
     render() {
+        if (this.state.isLoading) {
+            return (
+                <div className="row">
+                    <div className="col-12 text-center mt-5">
+                        <div class="spinner-border text-warning" role="status">
+                            <span class="sr-only"></span>
+                        </div>
+                    </div>
+                </div>
+            )
+        }
         return (
             <div className='home hideScroll'>
                 <div className='row '>
@@ -188,4 +210,25 @@ export default withRouter(Home);
             //     })
             // }).catch(err => {
             //     // alert('Failed to get data before login');
+            // });
+
+
+            // fetch(`${api_url}/post/delete_post?post_id=${post_id}`, {
+            //     method: 'get',
+            //     mode: 'no-cors',
+            //     headers: {
+            //         "Accept": 'application/json',
+            //         'Content-type': 'application/json'
+            //     },
+            // }).then(res => {
+            //     console.log(res);
+            //     if (!res.ok) {
+            //         throw new Error('Network response was not ok');
+            //     } else {
+            //         return res.json();
+            //     }
+            // }).then(res => {
+            //     this.props.history.push('/Profile');
+            // }).catch(err => {
+            //     alert('Failed to delete Post');
             // });
