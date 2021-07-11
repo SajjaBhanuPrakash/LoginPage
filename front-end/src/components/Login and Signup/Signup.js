@@ -114,18 +114,13 @@ class Signup extends Component {
         axios.post(`${api_url}/users/add_to_user_interests`, JSON.stringify({
             company_name: company_name,
             user_name: JSON.parse(sessionStorage.getItem('username'))
-        })).then(res => {
-            console.log('User interest added successfully')
-        }).catch(() => {
+        })).catch(() => {
             alert('failed to adda user Interest')
         })
     }
 
     handleSubmit = () => {
-        // try {
         if (this.validateForm(this.state.errors)) {
-            // const result = await 
-            // console.log('hiii')
             axios.post(`${api_url}/users/create_user`, JSON.stringify({
                 email: this.state.email,
                 password: this.state.password,
@@ -134,7 +129,7 @@ class Signup extends Component {
                 user_name: this.state.user_name,
             })).then(res => {
                 // sessionStorage.setItem('loggedin',JSON.stringify(true))
-                // sessionStorage.setItem('username',JSON.stringify(this.state.user_name))
+                sessionStorage.setItem('username',JSON.stringify(this.state.user_name))
                 this.handleAddUserInterests(this.state.curr_company)
                 this.props.history.push('/Login')
                 // alert('signup success')
@@ -196,34 +191,3 @@ class Signup extends Component {
 }
 
 export default Signup;
-
-// fetch(`${api_url}/users/create_user`, {
-            //     method: 'POST',
-            //     mode: 'no-cors',
-            //     headers: {
-            //         "Accept": 'application/json',
-            //         'Content-type': 'application/json'
-            //     },
-            //     body: JSON.stringify({
-            //         email: this.state.email,
-            //         password: this.state.password,
-            //         roll_no: this.state.regno,
-            //         current_company: this.state.curr_company,
-            //         user_name: this.state.uname,
-            //     })
-            // }).then(res => {
-            //     console.log(res)
-            //     if (!res.ok) {
-            //         throw new Error('Network response was not ok');
-            //     } else {
-            //         return res.json();
-            //     }
-            // }).then(res => {
-            //     this.props.history.push('/Login')
-            //     alert('signup success')
-
-            // }).catch(err => {
-            //     console.log(err);
-            //     alert('Failed to sign up')
-            //     // this.props.history.push('/Login')
-            // });

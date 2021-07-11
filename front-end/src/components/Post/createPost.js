@@ -9,6 +9,7 @@ class CreatePost extends Component {
         super(props)
 
         this.state = {
+            isLoading:false,
             company_name: '',
             role: '',
             package: '',
@@ -94,18 +95,13 @@ class CreatePost extends Component {
                 author: JSON.parse(sessionStorage.getItem('username')),
                 role: this.state.role,
                 company_name: this.state.companyName,
-                post_description: this.state.experience,
+                post_description: this.state.post_description,
                 package: this.state.package,
             })).then(res => {
-                // this.handleGetPostData(post_id)
                 this.props.history.push('/Profile')
-                console.log('post updated successfully')
             }).catch(err => {
                 alert('Failed to update post')
             });
-        }
-        else {
-            console.log('not valid')
         }
     }
 
@@ -119,13 +115,9 @@ class CreatePost extends Component {
                 package: this.state.package,
             })).then(res => {
                 this.props.history.push('/Profile')
-                console.log('post created successfully')
             }).catch(err => {
                 alert('Failed to create post')
             });
-        }
-        else {
-            console.log('not valid')
         }
     }
 
@@ -133,9 +125,8 @@ class CreatePost extends Component {
         axios.get(`${api_url}/post/get_single_post?post_id=${post_id}`)
         .then(result => {
             const res = result.data[0]
-            // console.log('get single post')
-            // console.log(result)
             this.setState({
+                isLoading:false,
                 company_name: res.company_name,
                 role: res.role,
                 package: res.package,
@@ -148,7 +139,6 @@ class CreatePost extends Component {
                 }
             })
         }).catch(err => {
-            console.log(err);
             alert('Failed to get post')
         });
         
@@ -157,11 +147,25 @@ class CreatePost extends Component {
     componentDidMount() {
         const post_id = this.props.location?.state;
         if (this.props.location?.onUpdatePost) {
+            this.setState({
+                isLoading: true
+            })
             this.handleGetPostData(post_id)
         }
     }
 
     render() {
+        if (this.state.isLoading) {
+            return (
+                <div className="row">
+                    <div className="col-12 text-center mt-5">
+                        <div class="spinner-border text-warning" role="status">
+                            <span class="sr-only"></span>
+                        </div>
+                    </div>
+                </div>
+            )
+        }
         const { errors } = this.state;
         return (
             <div className='holder p-1'>
@@ -194,86 +198,3 @@ class CreatePost extends Component {
 }
 
 export default CreatePost;
-
-// fetch(`${api_url}/post/create_post`, {
-//     method: 'post',
-//     mode: 'no-cors',
-//     headers: {
-//         'Accept': 'application/json',
-//         'Content-type': 'application/json'
-//     },
-//     body: JSON.stringify({
-//         author: JSON.parse(sessionStorage.getItem('username')),
-//         role: this.state.role,
-//         company_name: this.state.companyName,
-//         post_description: this.state.experience,
-//         package: this.state.package,
-//     })
-// }).then(res => {
-//     console.log(res)
-//     if (!res.ok) {
-//         throw new Error('Network response was not ok');
-//     } else {
-//         this.props.history.push('/Profile')
-//         console.log('post created successfully')
-//     }
-// }).catch(err => {
-//     console.log(err);
-//     alert('Failed to create post')
-// });
-
-
-// fetch(`${api_url}/post/update_post`, {
-//     method: 'post',
-//     mode: 'no-cors',
-//     headers: {
-//         'Accept': 'application/json',
-//         'Content-type': 'application/json'
-//     },
-//     body: JSON.stringify({
-//         author: JSON.parse(sessionStorage.getItem('username')),
-//         role: this.state.role,
-//         company_name: this.state.companyName,
-//         post_description: this.state.experience,
-//         package: this.state.package,
-//     })
-// }).then(res => {
-//     console.log(res)
-//     if (!res.ok) {
-//         throw new Error('Network response was not ok');
-//     } else {
-//         this.props.history.push('/Profile')
-//         console.log('post updated successfully')
-//     }
-// }).catch(err => {
-//     console.log(err);
-//     alert('Failed to update post')
-// });
-
-
-
-// fetch(`${api_url}/post/get_single_post?post_id=${post_id}`, {
-//     method: 'get',
-//     mode: 'no-cors',
-//     headers: {
-//         "Accept": 'application/json',
-//         'Content-type': 'application/json'
-//     },
-// }).then(res => {
-//     console.log(res)
-//     if (!res.ok) {
-//         throw new Error('Network response was not ok');
-//     } else {
-//         return res.json()
-//     }
-// }).then(res => {
-//     this.setState({
-//         company_name: res.company_name,
-//         role: res.role,
-//         package: res.package,
-//         post_description: res.post_description,
-//     })
-// }).catch(err => {
-//     console.log(err);
-//     alert('Failed to create post')
-// });

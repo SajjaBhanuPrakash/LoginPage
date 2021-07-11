@@ -37,7 +37,8 @@ import CreatePost from '../Post/createPost';
 import Profile from '../profile/profile';
 import axios from 'axios';
 import { withRouter } from 'react-router';
-
+import Select from 'react-select';
+import SearchResults from './searchResults';
 
 const drawerWidth = 240;
 
@@ -142,12 +143,13 @@ function Main(props) {
     const handleSearch = () => {
         axios.get(`${api_url}/post/get_posts_by_company_name?company_name=${input}`)
             .then(res => {
-                console.log('inside', res.data)
                 props.history.push({
-                    pathname: '/',
+                    pathname: '/SearchResults',
                     fromSearch: true,
-                    state: res.data
+                    state: res.data,
+                    input: input
                 });
+                setInput('')
             }).catch(() => {
                 console.log('failed to get data on search')
             })
@@ -155,25 +157,12 @@ function Main(props) {
     }
 
     useEffect(() => {
-        // sessionStorage.setItem('username', JSON.stringify(''))
-        // sessionStorage.setItem('loggedin', false)
-        // console.log('useeffect called')
-        // loggedin = JSON.parse(sessionStorage.getItem('loggedin'));
-        // const fetchData = async () => {
-        //     try {
-        //         await fetch(`${api_url}/post/get_all_company_names`, {
-        //             method: 'get',
-        //             mode: 'no-cors',
-        //             headers: {
-        //                 "Accept": 'application/json',
-        //                 'Content-type': 'application/json'
-        //             },
-        //         }).then(data => setCompanyNames(JSON.parse(data)))
-        //     } catch (e) {
-        //         console.log(e)
-        //     }
-        //     console.log(companyNames)
-        // }
+        axios.get(`${api_url}/post/get_all_company_names`)
+            .then(res => {
+                setCompanyNames(Array.from(new Set(res.data)))
+            }).catch(() => {
+                console.log('failed to get company names')
+            })
     }, [])
     return (
         <>
@@ -200,9 +189,16 @@ function Main(props) {
                         </IconButton>
                         <div className='Header'>
                             <h4>Jobify</h4>
-                            {/* <div className={classes.menuItems}> */}
                             <div className='searchBar'>
-                                <input onChange={handleChange} placeholder='Search by Company Name' />
+                                <input list="companyNames" placeholder='Search by Company name' onChange={handleChange} value={input} name="search" id="search" />
+                                <datalist id="companyNames">
+                                    {
+                                        companyNames.map(i => {
+                                          return  <option value={i} />
+                                        })
+                                    }
+                                </datalist>
+                                {/* <input onChange={handleChange} placeholder='Search by Company Name' /> */}
                                 <SearchIcon onClick={handleSearch} style={{ cursor: 'pointer' }} className='searchicon' />
                             </div>
                             <NavBar />
@@ -248,7 +244,6 @@ function Main(props) {
                 </Drawer> */}
                 <main className={classes.content}>
                     <div className={classes.toolbar} />
-                    {/* <Login pageClicked='login' /> */}
                     <Switch>
                         <Route exact path='/' component={Home}></Route>
                         <Route exact path='/Login' component={Login}></Route>
@@ -258,8 +253,8 @@ function Main(props) {
                         <Route exact path={'/ResetPassword'} component={ResetPassword}></Route>
                         <Route exact path={'/ChangePassword'} component={ChangePassword}></Route>
                         <Route exact path={'/CreatePost'} component={CreatePost}></Route>
-                        {/* <Route exact path={'/ShowPosts'} component={ShowPosts}></Route> */}
                         <Route exact path={'/Profile'} component={Profile}></Route>
+                        <Route exact path={'/SearchResults'} component={SearchResults}></Route>
                     </Switch>
                 </main>
 

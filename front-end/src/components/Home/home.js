@@ -17,14 +17,14 @@ class Home extends Component {
         }
     }
     onNavigateExperience(post_id) {
-        console.log(post_id);
         this.props.history.push({
             pathname: `/InterviewInfo/${post_id}`,
         });
     }
 
     componentDidUpdate(prevProps) {
-        if (this.props.location.fromSearch !== prevProps.location.fromSearch) {
+        if ((this.props.location.fromSearch !== prevProps.location.fromSearch) || (this.props.location.fromLogOut !== prevProps.location.fromLogOut) ||
+            (this.props.location.input !== prevProps.location.input)) {
             this.setState({
                 isLoading: false,
                 myData: this.props.location.state,
@@ -32,22 +32,33 @@ class Home extends Component {
         }
     }
 
+    handleGetAllComments = () => {
+        axios.get(`${api_url}/post/get_all_posts`)
+            .then(res => {
+                // alert('before login');
+                this.setState({
+                    isLoading: false,
+                    myData: res.data
+                })
+            }).catch(err => {
+                console.log('Failed to get data before login');
+            });
+    }
+
     componentDidMount() {
         if (this.props.location?.fromSearch) {
             this.setState({
+                isLoading: false,
                 myData: this.props.location.state,
             });
-            console.log('from Search')
         } else if (this.props.fromProfile) {
             this.setState({
+                isLoading: false,
                 myData: this.props.postsData
             });
-            console.log('from profile');
-        } else if (JSON.parse(sessionStorage.getItem('loggedin'))) {
+        } else if(JSON.parse(sessionStorage.getItem('loggedin'))) {
             axios.get(`${api_url}/post/get_user_interested_posts?user_name=${JSON.parse(sessionStorage.getItem('username'))}`)
                 .then(res => {
-                    console.log(res)
-                    console.log('after Logged in successfully');
                     this.setState({
                         isLoading: false,
                         myData: res.data
@@ -56,17 +67,7 @@ class Home extends Component {
                     console.log('Failed to get data on login');
                 });
         } else {
-            axios.get(`${api_url}/post/get_all_posts`)
-                .then(res => {
-                    // alert('before login');
-                    console.log(res)
-                    this.setState({
-                        isLoading: false,
-                        myData: res.data
-                    })
-                }).catch(err => {
-                    console.log('Failed to get before login');
-                });
+            this.handleGetAllComments()
         }
     }
     handleDeletePost = (post_id) => {
@@ -75,16 +76,13 @@ class Home extends Component {
         alert('are you sure');
         axios.get(`${api_url}/post/delete_post?post_id=${post_id}`)
             .then(res => {
-                console.log('post deleted successfully')
                 axios.get(`${api_url}/users/get_user?user_name=${JSON.parse(sessionStorage.getItem('username'))}`)
                     .then(res => {
-                        console.log(res)
                         this.setState({
                             isLoading: false,
                             myData: res.data.user_posts
                         })
                     }).catch(err => {
-                        console.log(err);
                         alert('Failed to get user profile')
                     });
             }).catch(err => {
@@ -146,89 +144,3 @@ class Home extends Component {
     }
 }
 export default withRouter(Home);
-
-// myData: [{post_id: 1, company: 'Amazon', name: 'Samson', experience: "I recently got a chance to interview with Amazon. I had three rounds. \nRound 1: It started with my introduction and then the interviewer quickly jumped to the coding part. I was asked two questions. \nThe first question was finding sliding window maximum. https://www.geeksforgeeks.org/sliding-window-maximum-maximum-of-all-subarrays-of-size-k/\nThe second one was to find the distance between two nodes of the Binary tree. https://www.geeksforgeeks.org/find-distance-between-two-nodes-of-a-binary-tree/\nThen the interviewer slightly modified the question – what if the node structure of that binary tree defines – value, parent. Given the two nodes. Find the distance between them.\nRound 2: This round was also a technical round wherein I was asked two coding problems.\nhttps://www.geeksforgeeks.org/k-largestor-smallest-elements-in-an-array/\nhttps://www.geeksforgeeks.org/find-excel-column-name-given-number/\nRound 3: This was the last round. We had a discussion related to my internships and projects. Then he asked me a couple of behavioral questions.\nThen he asked me DP problem. https://www.geeksforgeeks.org/longest-increasing-subsequence-dp-3/\nThe interviewers were very friendly. Overall the level was medium. One needs to be very calm during solving the problems. Be very clear about the time and space complexities and always speak while you are thinking. Discuss your solution with the interviewer and then only move onto writing the code. Always ask your interviewer if you are stuck or if you have any doubts. \nVerdict: Selected\nGeeksforGeeks is a great place to learn Data structures and Algorithms, which is the most important part of the interviews.\nAll the best!", likes: 3, id: 4,}]
-//myData: [{
-//     post_id: 1, company: 'Amazon', name: 'Samson', experience: "I recently got a chance to interview with Amazon. I had three rounds. \nRound 1: It started with my introduction and then the interviewer quickly jumped to the coding part. I was asked two questions. \nThe first question was finding sliding window maximum. https://www.geeksforgeeks.org/sliding-window-maximum-maximum-of-all-subarrays-of-size-k/\nThe second one was to find the distance between two nodes of the Binary tree. https://www.geeksforgeeks.org/find-distance-between-two-nodes-of-a-binary-tree/\nThen the interviewer slightly modified the question – what if the node structure of that binary tree defines – value, parent. Given the two nodes. Find the distance between them.\nRound 2: This round was also a technical round wherein I was asked two coding problems.\nhttps://www.geeksforgeeks.org/k-largestor-smallest-elements-in-an-array/\nhttps://www.geeksforgeeks.org/find-excel-column-name-given-number/\nRound 3: This was the last round. We had a discussion related to my internships and projects. Then he asked me a couple of behavioral questions.\nThen he asked me DP problem. https://www.geeksforgeeks.org/longest-increasing-subsequence-dp-3/\nThe interviewers were very friendly. Overall the level was medium. One needs to be very calm during solving the problems. Be very clear about the time and space complexities and always speak while you are thinking. Discuss your solution with the interviewer and then only move onto writing the code. Always ask your interviewer if you are stuck or if you have any doubts. \nVerdict: Selected\nGeeksforGeeks is a great place to learn Data structures and Algorithms, which is the most important part of the interviews.\nAll the best!", likes: 3, id: 4,
-// },
-// {
-//     post_id: 2, company: 'Infosys', name: 'Abcd', experience: 'nsm zh zxjbsgdh zgmnjak,b chjdsnnsm zhzxjbsg dhzgmnja k,bchjd snns mzhzxj bsgdhzg mnjak, bchjdsnns  mzhzxjbs gdhzgmnja k,bchjd snnsmzhzxj bsgdhzgmn jak,bch jdsnnsmzh zxjbsg dhzgmnj ak,bchjdsn nsmzhzxjbsg dhzgmn jak,bchjdsnn smzhzxjbsgd hzgmnjak,bchj dsnnsmzh zxjbsg dhzgmnjak, bchjdsnnsmzhz xjbsgd hzgmnjak,bc hjdsnnsmzhzxj bsgdhzgmnjak ,bchjdsnnsmz hzxjbsgdh zgmn jak,bch j dsn nsmzh zxjbsg dhzgmn jak,bch jdsn', likes: 4, id: 5,
-// }
-// ]
-
-
-
-
-
-
-            // fetch(`${api_url}/post/get_user_interested_posts?user_name=${JSON.parse(sessionStorage.getItem('username'))}`, {
-            //     method: 'get',
-            //     mode: 'no-cors',
-            //     headers: {
-            //         "Accept": 'application/json',
-            //         'Content-type': 'application/json'
-            //     },
-            // })
-            // .then(res => {
-            //     console.log(res);
-            //     if (!res.ok) {
-            //         throw new Error('Network response was not ok');
-            //     } else {
-            //     return res.json();
-            //     }
-            // }).then(res => {
-            //     alert('after Logged in successfully');
-            //     this.setState({
-            //         myData: res
-            //     })
-            // }).catch(err => {
-            //     alert('Failed to get data on login');
-            // });
-
-
-
-
-            // fetch(`${api_url}/post/get_all_posts?`, {
-            //     method: 'get',
-            //     mode: 'no-cors',
-            //     headers: {
-            //         "Accept": 'application/json',
-            //         'Content-type': 'application/json'
-            //     },
-            // }).then(res => {
-            //     console.log(res)
-            //     if (!res.ok) {
-            //         throw new Error('Network response was not ok');
-            //     } else {
-            //         return res.json();
-            //     }
-            // }).then(res => {
-            //     console.log('from home', res);
-            //     alert('after Logged in successfully');
-            //     this.setState({
-            //         myData: res
-            //     })
-            // }).catch(err => {
-            //     // alert('Failed to get data before login');
-            // });
-
-
-            // fetch(`${api_url}/post/delete_post?post_id=${post_id}`, {
-            //     method: 'get',
-            //     mode: 'no-cors',
-            //     headers: {
-            //         "Accept": 'application/json',
-            //         'Content-type': 'application/json'
-            //     },
-            // }).then(res => {
-            //     console.log(res);
-            //     if (!res.ok) {
-            //         throw new Error('Network response was not ok');
-            //     } else {
-            //         return res.json();
-            //     }
-            // }).then(res => {
-            //     this.props.history.push('/Profile');
-            // }).catch(err => {
-            //     alert('Failed to delete Post');
-            // });

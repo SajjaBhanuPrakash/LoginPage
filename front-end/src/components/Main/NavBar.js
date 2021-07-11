@@ -5,38 +5,29 @@ import {
 } from "react-router-dom";
 import { connect } from "react-redux";
 import * as Actions from '../../ActionCreator';
-
+import {withRouter} from 'react-router'
 
 class NavBar extends React.Component {
 
     constructor(props) {
         super(props)
         this.state = {
-            loggeIn: false
+            loggedIn: false
         }
     }
 
+    // componentDidUpdate(prevProps){
+
+    //     if(this.props.loggedIn !== prevProps.loggedIn){
+
+    //         this.setState({
+    //             loggedIn: this.props.loggedIn
+    //         })
+    //     }
+    // }
+
     handleLogout = () => {
         this.props.handleLogout();
-        // try {
-        //     const result = await fetch(`${api_url}/logout?user_name=${sessionStorage.getItem('username')}`, {
-        //         method: 'get',
-        //         mode: 'no-cors',
-        //         headers: {
-        //             "Accept": 'application/json',
-        //             'Content-type': 'application/json'
-        //         },
-        //     });
-        //     sessionStorage.setItem('username', '');
-        //     sessionStorage.setItem('loggedIn', false);
-        //     this.props.history.push({
-        //         pathname: '/',
-        //         fromSearch: true,
-        //         state: JSON.parse(result)
-        //     });
-        // } catch (e) {
-        //     console.log(e)
-        // }
     }
 
 
@@ -48,7 +39,7 @@ class NavBar extends React.Component {
                     <li>
                         <Link to='/'>Home</Link>
                     </li>
-                    {!loggedIn &&
+                    {(!loggedIn ) &&
                         <>
                             <li>
                                 <Link to='/Login'>Login</Link>
@@ -58,7 +49,7 @@ class NavBar extends React.Component {
                             </li>
                         </>
                     }
-                    {loggedIn &&
+                    {(loggedIn)&&
                         <>
                             <li>
                                 <Link to='/Profile'>Profile</Link>
@@ -87,4 +78,4 @@ export const mapDispatchToProps = (dispatch, ownProps) => ({
 export const mapStateToProps = (state) => ({
     loggedIn: state.MainReducer.loggedIn,
 });
-export default connect(mapStateToProps, mapDispatchToProps)(NavBar);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(NavBar));

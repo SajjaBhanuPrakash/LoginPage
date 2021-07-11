@@ -29,7 +29,6 @@ class Login extends Component {
     validateForm = errors => {
         const temp = Object.values(errors);
         const valid = !temp.some(val => val.hasError);
-        console.log(valid)
         return valid;
     };
 
@@ -37,7 +36,6 @@ class Login extends Component {
         event.preventDefault();
         const { name, value } = event.target;
         let errors = this.state.errors;
-        // console.log('from login handle Change')
         switch (name) {
             case 'user_name':
                 if (value.length>0) {
@@ -70,22 +68,11 @@ class Login extends Component {
     handleSubmit = () => {
         if (this.validateForm(this.state.errors)) {
             const data = { user_name: this.state.user_name, password: this.state.password }
+            this.setState({
+                user_name:'',
+                password: ''
+            })
             this.props.loginAPI(data);
-            // try {
-            //     const result = await fetch(`${api_url}/login?user_name = ${this.state.email} & password=${this.state.password}`, {
-            //         method: 'get',
-            //         mode: 'no-cors',
-            //         headers: {
-            //             "Accept": 'application/json',
-            //             'Content-type': 'application/json'
-            //         }
-            //     });
-            //     sessionStorage.setItem('username',this.state.email);
-            //     sessionStorage.setItem('loggedin',true);
-            //     this.props.history.push('/');
-            // } catch (e) {
-            //     console.log(e)
-            // }
         }
     }
     render() {
@@ -101,11 +88,11 @@ class Login extends Component {
                     <div className='container fillForm'>
                         <div className="card">
                             <p>Login to your Account</p>
-                            <input type='email' name="user_name" placeholder="User Name" required onChange={this.handleChange} />
+                            <input type='text' name="user_name" placeholder="User Name" value={this.state.user_name} required onChange={this.handleChange} />
                             <span className="error">{errors.user_name.message}</span>
                             <br />
 
-                            <input type='password' name='password' placeholder='Password..' required onChange={this.handleChange} />
+                            <input type='password' name='password' placeholder='Password..' value={this.state.password} required onChange={this.handleChange} />
                             <span className="error">{errors.password.message}</span>
                             <br />
 
