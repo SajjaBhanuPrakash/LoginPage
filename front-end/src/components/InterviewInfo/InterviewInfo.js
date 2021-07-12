@@ -18,7 +18,8 @@ class InterviewInfo extends Component {
             isLiked: false,
             postData: null,
             comments: [],
-            isLoading: true
+            isLoading: true,
+            isCommentsLoading: true
         }
     }
     handleCommentsClose = () => {
@@ -51,6 +52,7 @@ class InterviewInfo extends Component {
         axios.get(`${api_url}/post/get_comments_for_post?post_id=${post_id}`)
             .then(res => {
                 this.setState({
+                    isCommentsLoading: false,
                     comments: res.data
                 })
             }).catch(err => {
@@ -59,25 +61,39 @@ class InterviewInfo extends Component {
     }
 
     handleAddComment = (event, post_id) => {
+        this.setState({
+            isCommentsLoading: true
+        })
         if (JSON.parse(sessionStorage.getItem('loggedin'))) {
             axios.post(`${api_url}/post/add_comment_to_post`, JSON.stringify({
                 post_id: post_id,
                 comment: this.state.comment_msg,
                 user_name: JSON.parse(sessionStorage.getItem('username'))
-            })).then(res => {               
-                this.handleCommentData(this.state.postData.post_id)
+            })).then(res => {
+                this.setState({
+                    isCommentsLoading: false
+                })
+                this.handleCommentData(post_id)
             }).then(res => {
-                this.handlePostData(this.state.postData.post_id)
+                this.handlePostData(post_id)
             }).catch(err => {
                 console.log('Failed to add comment');
             });
         } else {
             alert('Please Login to comment/Like')
-        } 
+        }
         this.setState({
             comment_msg: ''
         })
-        
+
+    }
+    handleAddUserInterests = (company_name) => {
+        axios.post(`${api_url}/users/add_to_user_interests`, JSON.stringify({
+            company_name: company_name,
+            user_name: JSON.parse(sessionStorage.getItem('username'))
+        })).catch(() => {
+            alert('failed to adda user Interest')
+        })
     }
 
     handleLikes = (post_id) => {
@@ -87,12 +103,13 @@ class InterviewInfo extends Component {
                     .then(res => {
                         this.handlePostData(post_id);
                     }).catch(err => {
-                        console.log('Failed to like');
+                        console.log('Failed to dislike');
                     });
             } else {
                 axios.get(`${api_url}/post/like_post?user_name=${JSON.parse(sessionStorage.getItem('username'))}&post_id=${post_id}`)
                     .then(res => {
                         this.handlePostData(post_id)
+                        this.handleAddUserInterests(this.state.postData.company_name)
                     }).catch(err => {
                         console.log('Failed to like');
                     });
@@ -164,6 +181,17 @@ class InterviewInfo extends Component {
                             </div>
                             <div className='allComments hideScroll'>
                                 {
+                                    // this.state.isCommentsLoading ?
+                                    //     <>
+                                    //         <div className="row">
+                                    //             <div className="col-12 text-center mt-5">
+                                    //                 <div class="spinner-border text-warning" role="status">
+                                    //                     <span class="sr-only"></span>
+                                    //                 </div>
+                                    //             </div>
+                                    //         </div>
+                                    //     </>
+                                    //     :
                                     postData.comments > 0 ?
                                         this.state.comments.map(comment => {
                                             return (
@@ -179,11 +207,9 @@ class InterviewInfo extends Component {
                                         </div>
                                 }
                             </div>
-                            {/* { */}
-                            {/* // JSON.parse(sessionStorage.getItem('loggedin')) === true && */}
                             <div className='comment-footer'>
-                                <textarea rows='1' cols='20' name='comment_msg' placeholder='Add your comment..' onChange={this.handleChange} className='addComment hideScroll' 
-                                value={this.state.comment_msg}/>
+                                <textarea rows='1' cols='20' name='comment_msg' placeholder='Add your comment..' onChange={this.handleChange} className='addComment hideScroll'
+                                    value={this.state.comment_msg} />
                                 <button type='button' onClick={(event) => this.handleAddComment(event, postData.post_id)} className='postComment'>Post</button>
                             </div>
                             {/* } */}
