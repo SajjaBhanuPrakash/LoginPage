@@ -2,9 +2,13 @@
 """
 This module contains classes that helps interaction with Redshift
 """
+
+import sys
+sys.path.append('D:/Projects/Backend_Serverless App/serverless-app')
+
 import logging
 import psycopg2
-from .redshift_client_config import RedshiftClientConfig
+from database.redshift_client_config import RedshiftClientConfig
 
 
 class RedshiftClient(object):

@@ -1,3 +1,7 @@
+import sys
+sys.path.append('.')
+
+
 from models.likes import Likes
 from models.comments import Comments
 
